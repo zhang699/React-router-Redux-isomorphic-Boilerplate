@@ -1,3 +1,5 @@
-# React server side rendering 
+# React server side rendering with Redux and react-router
+
+
 
 
