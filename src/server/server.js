@@ -11,6 +11,10 @@ import {RouterContext, match, createRoutes} from 'react-router';
 import root from '../client/root.js';
 import {Provider} from 'react-redux'
 import {configureStore} from '../redux/store'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 const routes = createRoutes(root);
 
 
@@ -39,14 +43,24 @@ let initialState = {
 
 const store = configureStore(initialState);
 
+
 app.get('*', (req, res) => {
+	const muiTheme = getMuiTheme({
+	  userAgent: req.headers['user-agent'],
+	});
   match({routes, location: req.url}, (error, redirectLocation, renderProps) => {
     if (error) {
       res.status(500).send(error.message);
     } else if (redirectLocation) {
       res.redirect(302, redirectLocation.pathname + redirectLocation.search);
     } else if (renderProps) {
-      const content = renderToString(<Provider store={store}><RouterContext {...renderProps} /></Provider>);
+      const content = renderToString(
+				<Provider store={store}>
+				  <MuiThemeProvider muiTheme={muiTheme}>
+					  <RouterContext {...renderProps} />
+				  </MuiThemeProvider>
+				</Provider>
+			);
       let state = store.getState();
       let page = renderFullPage(content, state);
       return res.status(200).send(page);

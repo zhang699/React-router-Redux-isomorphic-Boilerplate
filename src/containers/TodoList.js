@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import actions from '../redux/actions/todoActions.js'
 import { bindActionCreators } from 'redux'
 import List from '../components/List.js'
-
+import RaisedButton from 'material-ui/RaisedButton';
 class TodoList extends Component {
   send = () => {
     let text = this.inputFiled.value;
@@ -23,6 +23,7 @@ class TodoList extends Component {
         <button onClick={()=>this.sendAsync()}>Async</button>
         <List list={this.props} itemClick={(id)=>this.itemClick(id)}>
         </List>
+         <RaisedButton label="Default" onClick={()=>this.send()} />
       </div>
     )
   }
