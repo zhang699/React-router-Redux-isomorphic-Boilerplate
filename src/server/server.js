@@ -21,6 +21,7 @@ var compiler = webpack(config);
 app.use(webpackDevMiddleware(compiler, {noInfo:true,publicPath: config.output.publicPath}));
 app.use(webpackHotMiddleware(compiler));
 app.use(express.static('./dist'));
+app.use(express.static('./src'));
 
 
 app.post('/ajax',function(req,res){
@@ -62,6 +63,9 @@ const renderFullPage = (html, preloadedState) => (`
 <head>
   <meta charset="UTF-8">
   <title>React Todo List</title>
+	<link rel="stylesheet" href="../materialize.min.css">
+	<script src="../jquery.min.js""></script>
+  <script src="../materialize.min.js"></script>
 </head>
 <body>
   <div id="app">${html}</div>
