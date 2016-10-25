@@ -64,9 +64,8 @@ const renderFullPage = (html, preloadedState) => (`
   <meta charset="UTF-8">
   <title>React Todo List</title>
 	<link rel="stylesheet" href="../materialize.min.css">
-	<script  src="../jquery.min.js""></script>
-<script src="../materialize.min.js"></script>
-
+	<script src="../jquery.min.js""></script>
+  <script src="../materialize.min.js"></script>
 </head>
 <body>
   <div id="app">${html}</div>
