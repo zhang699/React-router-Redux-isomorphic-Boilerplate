@@ -24,7 +24,7 @@ var compiler = webpack(config);
 
 app.use(webpackDevMiddleware(compiler, {noInfo:true,publicPath: config.output.publicPath}));
 app.use(webpackHotMiddleware(compiler));
-app.use(express.static('./dist'));
+app.use(express.static(path.join(__dirname, '../client')));
 
 
 app.post('/ajax',function(req,res){
@@ -75,7 +75,10 @@ const renderFullPage = (html, preloadedState) => (`
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
   <title>React Todo List</title>
+	<link rel="stylesheet" type="text/css" href="reset.css">
+
 </head>
 <body>
   <div id="app">${html}</div>

@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
 import TodoList from './TodoList.js'
 import {connect} from 'react-redux'
-import Nav from './Nav.js'
+import Header from './Header.js'
 
 class App extends Component {
 
   render() {
     return (
       <div>
-        <Nav />
+        <Header />
         <div style={style.content}>
-        <h1>Tode li</h1>
         {this.props.children}
         </div>
       </div>
@@ -20,8 +19,7 @@ class App extends Component {
 }
 const style = {
   content: {
-    marginTop: "5%",
-    marginLeft: "5%"
+    marginTop: "48px",
   }
 }
 
