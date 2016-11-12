@@ -8,7 +8,11 @@ db.once('open', function() {
   console.log("connect mongo")
 });
 
-exports.User = mongoose.model('ac', new mongoose.Schema({
-	name:{type: String, unique: true},
-	password:String
+//用戶註冊
+exports.User = mongoose.model('users', new mongoose.Schema({
+	account:{type: String, unique: true},
+	password: String,
+  email: String,
+  name: String,
+  RegistedDate: String
 }));

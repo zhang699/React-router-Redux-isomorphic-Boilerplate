@@ -1,11 +1,35 @@
 var express = require('express');
+var app = express();
 var path = require('path');
 var config = require('../../webpack.config.js');
 var webpack = require('webpack');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser')
 var api = require ('./api.js').api;
+
+app.use(express.static(path.join(__dirname, '../client')));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+app.use(session({
+	saveUninitialized: true, // don't create session until something stored
+  resave: false, //don't save session if unmodified
+  secret: 'yicheng',
+  key: 'auth_token',//cookie name
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
+  store: new MongoStore({
+		url:'mongodb://forclass1:test123@ds013898.mlab.com:13898/forclass'
+  })
+}));
+
+api(app);//引入api.js
+
+
 
 
 import React from 'react';
@@ -20,18 +44,9 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 const routes = createRoutes(root);
 
-
-var app = express();
-
 var compiler = webpack(config);
-
 app.use(webpackDevMiddleware(compiler, {noInfo:true,publicPath: config.output.publicPath}));
 app.use(webpackHotMiddleware(compiler));
-app.use(express.static(path.join(__dirname, '../client')));
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-api(app);//引入api.js
-
 
 let initialState = {
 		todos:[{

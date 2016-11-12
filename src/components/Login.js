@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import SimpleDialog from './utils/SimpleDialog.js';
 import axios from 'axios'
 
 class Login extends Component {
@@ -10,7 +11,9 @@ class Login extends Component {
       account: '',
       password: '',
       accountCheck : true,
-      passwordCheck : true
+      passwordCheck : true,
+      dialog: false,
+      dialogText: ''
     }
   }
   checkAccount(e) {
@@ -30,12 +33,14 @@ class Login extends Component {
     this.setState({ passwordCheck: true })
   }
   sendRequest() {
-    axios.post('/test', {
+    const context = this;//因then會找不到this
+    axios.post('/login', {
         account: this.state.account,
         password: this.state.password
       })
       .then(function (response) {
-        console.log(response);
+        context.setState({ dialogText:response.data })
+        context.setState({ dialog: true });
       })
       .catch(function (error) {
         console.log(error);
@@ -58,7 +63,8 @@ class Login extends Component {
           errorText={ this.state.passwordCheck ? '' : 'This field is required' }
           floatingLabelText="密碼"
         /><br />
-          <RaisedButton onClick={() => this.sendRequest()} label="登入" primary={true}  style={style.login} />
+        <RaisedButton onClick={() => this.sendRequest()} label="登入" primary={true}  style={style.login} />
+        { this.state.dialog ? <SimpleDialog content={this.state.dialogText} context={this} /> : '' }
       </div>
     )
   }

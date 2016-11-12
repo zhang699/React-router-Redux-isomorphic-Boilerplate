@@ -41,15 +41,19 @@ class Register extends Component {
   }
   checkPassword1(e) {
     this.state.password1 = e.target.value;
-    if (e.target.value === ''){
+    if (e.target.value === '' || e.target.value !== this.state.password ){
       this.setState({ password1Check: false })
       return
     }
     this.setState({ password1Check: true })
   }
   checkEmail(e) {
+    function validateEmail(email) {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }
     this.state.email = e.target.value;
-    if (e.target.value === ''){
+    if (e.target.value === '' || validateEmail(e.target.value) === false){
       this.setState({ emailCheck: false })
       return
     }
@@ -108,14 +112,14 @@ class Register extends Component {
           hintText="確認密碼"
           type="password"
           floatingLabelStyle={{color: 'gray'}}
-          errorText={ this.state.password1Check ? '' : 'This field is required' }
+          errorText={ this.state.password1Check ? '' : 'This field is required or Not match password' }
           floatingLabelText="確認密碼"
         /><br />
         <TextField
           onBlur = {(e) => this.checkEmail(e) }
           hintText="E-mail"
           floatingLabelStyle={{color: 'gray'}}
-          errorText={ this.state.emailCheck ? '' : 'This field is required' }
+          errorText={ this.state.emailCheck ? '' : 'This field is required or Wrong email format' }
           floatingLabelText="E-mail"
         /><br />
         <TextField
