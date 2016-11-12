@@ -4,6 +4,9 @@ var config = require('../../webpack.config.js');
 var webpack = require('webpack');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
+var bodyParser = require('body-parser');
+var api = require ('./api.js').api;
+
 
 import React from 'react';
 import {renderToString} from 'react-dom/server';
@@ -25,12 +28,10 @@ var compiler = webpack(config);
 app.use(webpackDevMiddleware(compiler, {noInfo:true,publicPath: config.output.publicPath}));
 app.use(webpackHotMiddleware(compiler));
 app.use(express.static(path.join(__dirname, '../client')));
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+api(app);//引入api.js
 
-
-app.post('/ajax',function(req,res){
-
-	res.end("success");
-})
 
 let initialState = {
 		todos:[{
@@ -77,7 +78,7 @@ const renderFullPage = (html, preloadedState) => (`
   <meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
   <title>React Todo List</title>
-	<link rel="stylesheet" type="text/css" href="reset.css">
+	<link rel="stylesheet" type="text/css" href="/css/reset.css">
 
 </head>
 <body>
