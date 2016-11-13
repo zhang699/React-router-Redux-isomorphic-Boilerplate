@@ -10,6 +10,9 @@ class App extends Component {
     const context = this;
     axios.get('/getUser',{})
       .then(function (response) {
+        if(typeof response.data === 'string'){
+          return //如session內無user會回傳空值 type為String
+        }
         context.props.userInfoAction(response.data);
       })
       .catch(function (error) {

@@ -25,6 +25,10 @@ app.post('/login',function(req,res){
 			}
 		})
 })
+app.post('/logout',function(req,res){
+	req.session.user = null
+	res.end();
+})
 
 app.post('/signup',function(req,res){
 

@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import RaisedButton from 'material-ui/RaisedButton';
 import { browserHistory } from 'react-router'
 import Menu from '../components/utils/Menu.js'
+import axios from 'axios';
 
 class Header extends Component {
   login = () => {
@@ -14,7 +15,14 @@ class Header extends Component {
     browserHistory.push('/register')
   };
   logout = () => {
-    this.props.logout();
+    const context = this;
+    axios.post('/logout', {})
+      .then(function (response) {
+        context.props.logout();
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
   }
   render() {
     return (
