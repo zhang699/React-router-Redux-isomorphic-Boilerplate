@@ -1,4 +1,7 @@
 import React,{Component} from 'react';
+import {connect} from 'react-redux'
+import actions from '../redux/actions/userInfo.js'
+import { bindActionCreators } from 'redux'
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from './utils/SimpleDialog.js';
@@ -33,7 +36,7 @@ class Login extends Component {
     this.setState({ passwordCheck: true })
   }
   sendRequest() {
-    const context = this;//因then會找不到this
+    const context = this;//因.then會找不到this
     axios.post('/login', {
         account: this.state.account,
         password: this.state.password
@@ -41,6 +44,13 @@ class Login extends Component {
       .then(function (response) {
         context.setState({ dialogText:response.data })
         context.setState({ dialog: true });
+        axios.get('/getUser',{})
+          .then(function (response) {
+            context.props.userInfoAction(response.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       })
       .catch(function (error) {
         console.log(error);
@@ -76,4 +86,10 @@ const style = {
   }
 }
 
-export default Login;
+const mapStateToProp = (state) => {
+	return state
+}
+
+export default connect(mapStateToProp,{
+  userInfoAction:actions.userInfo,
+})(Login)

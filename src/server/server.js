@@ -7,7 +7,7 @@ var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
-var api = require ('./api.js').api;
+var api = require ('./api.js');
 
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,7 +27,7 @@ app.use(session({
   })
 }));
 
-api(app);//引入api.js
+api.api(app);//引入api.js
 
 
 
@@ -48,19 +48,21 @@ var compiler = webpack(config);
 app.use(webpackDevMiddleware(compiler, {noInfo:true,publicPath: config.output.publicPath}));
 app.use(webpackHotMiddleware(compiler));
 
-let initialState = {
-		todos:[{
-			id:0,
-			completed: false,
-			text:'initial for demo'
-		}]
-}
-
-
-const store = configureStore(initialState);
 
 
 app.get('*', (req, res) => {
+
+	let initialState = {
+			todos:[{
+				id:0,
+				completed: false,
+				text:'initial for demo'
+			}],
+			userInfo:{
+				
+			}
+	}
+	const store = configureStore(initialState);
 	const muiTheme = getMuiTheme({
 	  userAgent: req.headers['user-agent'],
 	});
