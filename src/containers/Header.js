@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import actions from '../redux/actions/userInfo.js'
 import Navbar from '../components/Navbar'
 import RaisedButton from 'material-ui/RaisedButton';
 import { browserHistory } from 'react-router'
+import Menu from '../components/utils/Menu.js'
 
-export default class Header extends Component {
+class Header extends Component {
   login = () => {
     browserHistory.push('/login')
   };
@@ -14,8 +17,16 @@ export default class Header extends Component {
     return (
       <div style={style.container}>
         <Navbar />
-        <RaisedButton onClick={() => this.login()} label="登入"  style={style.login} />
-        <RaisedButton onClick={() => this.register()} label="註冊"  style={style.register} />
+        {
+        this.props.userInfo.login
+        ?
+        <Menu style={style.menu} />
+        :
+        <div>
+          <RaisedButton onClick={() => this.login()} label="登入"  style={style.login} />
+          <RaisedButton onClick={() => this.register()} label="註冊"  style={style.register} />
+        </div>
+        }
       </div>
     )
   }
@@ -39,5 +50,18 @@ const style= {
     float: 'right',
     marginTop: '-43px',
     marginRight: '140px'
+  },
+  menu: {
+    marginTop: '150px'
   }
 }
+
+function  mapStateToProp(state){
+	return ({
+    userInfo:state.userInfo
+  })
+}
+
+export default connect(mapStateToProp,{
+  logOut:actions.logOut
+})(Header)
