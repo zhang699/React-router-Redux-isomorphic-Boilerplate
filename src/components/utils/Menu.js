@@ -1,56 +1,44 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import Popover from 'material-ui/Popover';
-import Menu from 'material-ui/Menu';
+import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 
-export default class PopoverExampleSimple extends React.Component {
+const styles = {
+  customWidth: {
+    width: 200,
+  },
+};
+
+export default class DropDownMenuSimpleExample extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      open: false,
-    };
+    this.state = {value: 1};
   }
 
-  handleTouchTap = (event) => {
-    // This prevents ghost click.
-    event.preventDefault();
-
-    this.setState({
-      open: true,
-      anchorEl: event.currentTarget,
-    });
-  };
-
-  handleRequestClose = () => {
-    this.setState({
-      open: false,
-    });
+  handleChange = (event, index, value) => {
+    switch (index) {
+      case 4:
+        this.props.logout();
+        return
+      default:return
+    }
   };
 
   render() {
     return (
       <div>
-        <RaisedButton
-          onTouchTap={this.handleTouchTap}
-          label="Click me"
-        />
-        <Popover
-          open={this.state.open}
-          anchorEl={this.state.anchorEl}
-          anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-          targetOrigin={{horizontal: 'left', vertical: 'top'}}
-          onRequestClose={this.handleRequestClose}
+        <DropDownMenu
+          value={this.state.value}
+          onChange={this.handleChange}
+          style={styles.customWidth}
+          autoWidth={false}
         >
-          <Menu>
-            <MenuItem primaryText="Refresh" />
-            <MenuItem primaryText="Help &amp; feedback" />
-            <MenuItem primaryText="Settings" />
-            <MenuItem primaryText="Sign out" />
-          </Menu>
-        </Popover>
+          <MenuItem value={1} primaryText={ `使用者： ${this.props.title}` } />
+          <MenuItem value={2} primaryText="Every Night" />
+          <MenuItem value={3} primaryText="Weeknights" />
+          <MenuItem value={4} primaryText="Weekends" />
+          <MenuItem value={5} primaryText="登出" />
+        </DropDownMenu>
       </div>
     );
   }

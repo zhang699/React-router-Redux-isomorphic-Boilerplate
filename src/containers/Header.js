@@ -13,6 +13,9 @@ class Header extends Component {
   register = () => {
     browserHistory.push('/register')
   };
+  logout = () => {
+    this.props.logout();
+  }
   render() {
     return (
       <div style={style.container}>
@@ -20,7 +23,9 @@ class Header extends Component {
         {
         this.props.userInfo.login
         ?
-        <Menu style={style.menu} />
+        <div style={style.menu}>
+          <Menu logout={() => this.logout()} title={ this.props.userInfo.name } />
+        </div>
         :
         <div>
           <RaisedButton onClick={() => this.login()} label="登入"  style={style.login} />
@@ -52,7 +57,9 @@ const style= {
     marginRight: '140px'
   },
   menu: {
-    marginTop: '150px'
+    marginTop: '-50px',
+    float: 'right',
+    marginRight: '1%'
   }
 }
 
@@ -63,5 +70,5 @@ function  mapStateToProp(state){
 }
 
 export default connect(mapStateToProp,{
-  logOut:actions.logOut
+  logout:actions.logOut
 })(Header)
