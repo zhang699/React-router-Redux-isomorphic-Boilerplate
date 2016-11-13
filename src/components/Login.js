@@ -5,7 +5,8 @@ import { bindActionCreators } from 'redux'
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from './utils/SimpleDialog.js';
-import axios from 'axios'
+import axios from 'axios';
+import { browserHistory } from 'react-router'
 
 class Login extends Component {
   constructor(props) {
@@ -46,7 +47,11 @@ class Login extends Component {
         context.setState({ dialog: true });
         axios.get('/getUser',{})
           .then(function (response) {
+            if(typeof response.data === 'string'){
+              return //如session內無user會回傳空值 type為String
+            }
             context.props.userInfoAction(response.data);
+            browserHistory.push('/main')
           })
           .catch(function (error) {
             console.log(error);
