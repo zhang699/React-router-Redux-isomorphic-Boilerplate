@@ -25,7 +25,7 @@ class Main extends Component {
         <button onClick={()=>this.sendAsync()}>Async</button>
         <List list={this.props} itemClick={(id)=>this.itemClick(id)}>
         </List>
-<FlatButton label="Primary" primary={true}/>
+        <FlatButton label="Primary" primary={true}/>
       </div>
     )
   }

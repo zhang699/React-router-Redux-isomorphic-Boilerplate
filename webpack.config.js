@@ -4,6 +4,7 @@ module.exports = {
   devtool: 'cheap-eval-source-map',
   entry: {
     app:[
+    'react-hot-loader/patch',
     'webpack-hot-middleware/client',
     './src/client/client.js'
   ],
@@ -24,11 +25,12 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        loader: 'babel',
         exclude: /node_modules/,
         query: {
-          presets: ['react', 'es2015','stage-0', 'react-hmre']
-        }
+          presets: ['react', 'es2015','stage-0', 'react-hmre'],
+          cacheDirectory: true
+        },
       }
     ]
   }
