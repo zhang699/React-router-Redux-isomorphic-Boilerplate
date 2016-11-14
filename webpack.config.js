@@ -4,7 +4,6 @@ module.exports = {
   devtool: 'cheap-eval-source-map',
   entry: {
     app:[
-    'react-hot-loader/patch',
     'webpack-hot-middleware/client',
     './src/client/client.js'
   ],
