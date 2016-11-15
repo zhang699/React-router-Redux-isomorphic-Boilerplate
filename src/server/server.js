@@ -30,8 +30,6 @@ app.use(session({
 api.api(app);//引入api.js
 
 
-
-
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {RouterContext, match, createRoutes} from 'react-router';
@@ -59,7 +57,7 @@ app.get('*', (req, res) => {
 				text:'initial for demo'
 			}],
 			userInfo:{
-				
+
 			}
 	}
 	const store = configureStore(initialState);
@@ -103,7 +101,6 @@ const renderFullPage = (html, preloadedState) => (`
   <script>
   window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\x3c')}
    </script>
-  <script src="vendor.bundle.js"></script>
   <script src="bundle.js"></script>
 </body>
 </html>

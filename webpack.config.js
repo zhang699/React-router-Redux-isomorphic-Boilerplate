@@ -7,7 +7,6 @@ module.exports = {
     'webpack-hot-middleware/client',
     './src/client/client.js'
   ],
-  vendor:['react','react-dom']
 },
 
   output: {
@@ -18,14 +17,13 @@ module.exports = {
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.bundle.js"),
   ],
   module: {
     loaders: [
       {
         test: /\.js$/,
         loader: 'babel',
-        exclude: /node_modules/,
+        exclude: ['/node_modules/','/src/server/','/src/client'],
         query: {
           presets: ['react', 'es2015','stage-0', 'react-hmre'],
           cacheDirectory: true
