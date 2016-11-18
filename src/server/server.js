@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var path = require('path');
 var config = require('../../webpack.config.js');
 var webpack = require('webpack');
@@ -7,7 +9,8 @@ var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
-var api = require ('./api.js');
+import { api } from './api.js';
+import { post, get } from 'prore'
 
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,7 +30,21 @@ app.use(session({
   })
 }));
 
-api.api(app);//引入api.js
+io.on('connection', function(socket){
+  console.log('a user connected');
+	socket.on('postArticle', function(){
+		post({
+			host: 'localhost',
+			port: '3001',
+			path: '/getArticle'
+		},'hi')
+		.then(function(data){
+			socket.broadcast.emit('updateArticle',JSON.parse(data));
+			socket.emit('updateArticle',JSON.parse(data));
+		});
+  });
+});
+api(app);//引入api.js
 
 
 import React from 'react';
@@ -58,8 +75,23 @@ app.get('*', (req, res) => {
 			}],
 			userInfo:{
 
-			}
+			},
+			article: []
 	}
+
+///如在server fetch 時用get 會因為在app.get('*'）內，造成socket hang up
+	 post({
+		 host: 'localhost',
+		 port: '3001',
+		 path: '/getArticle'
+	 },'hi')
+	 .then(function(data){
+		 initialState.article = JSON.parse(data);
+
+
+
+
+
 	const store = configureStore(initialState);
 	const muiTheme = getMuiTheme({
 	  userAgent: req.headers['user-agent'],
@@ -86,6 +118,8 @@ app.get('*', (req, res) => {
   });
 });
 
+})
+
 const renderFullPage = (html, preloadedState) => (`
 <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +128,10 @@ const renderFullPage = (html, preloadedState) => (`
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
   <title>React Todo List</title>
 	<link rel="stylesheet" type="text/css" href="/css/reset.css">
-
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	  var socket = io();
+	</script>
 </head>
 <body>
   <div id="app">${html}</div>
@@ -107,9 +144,9 @@ const renderFullPage = (html, preloadedState) => (`
 `
 );
 
-var port = 3000;
+var port = 3001;
 
-app.listen(port, function(error) {
+http.listen(port,'127.0.0.1', function(error) {
   if (error) throw error;
   console.log("Express server listening on port", port);
 });

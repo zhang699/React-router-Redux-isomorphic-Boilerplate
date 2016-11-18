@@ -3,6 +3,8 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
 import MainNavBtn from 'material-ui/svg-icons/action/toc';
+import { browserHistory } from 'react-router';
+
 export default class Navbar extends React.Component {
 
   constructor(props) {
@@ -12,7 +14,15 @@ export default class Navbar extends React.Component {
 
   handleToggle = () => this.setState({open: !this.state.open});
 
-  handleClose = () => this.setState({open: false});
+  toArticle = () => {
+    browserHistory.push('/main')
+    this.setState({open: false});
+  }
+
+    toa = () => {
+      browserHistory.push('/a')
+      this.setState({open: false});
+    }
 
   render() {
     return (
@@ -26,8 +36,8 @@ export default class Navbar extends React.Component {
           open={this.state.open}
           onRequestChange={(open) => this.setState({open})}
         >
-          <MenuItem onTouchTap={this.handleClose}>Menu Item</MenuItem>
-          <MenuItem onTouchTap={this.handleClose}>Menu Item 2</MenuItem>
+          <MenuItem onTouchTap={this.toArticle}>文章</MenuItem>
+          <MenuItem onTouchTap={this.toa}>Menu Item 2</MenuItem>
         </Drawer>
       </div>
     );

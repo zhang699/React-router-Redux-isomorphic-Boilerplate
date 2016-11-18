@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import RaisedButton from 'material-ui/RaisedButton';
 import { browserHistory } from 'react-router'
 import Menu from '../components/utils/Menu.js'
+import { getCookie } from '../client/javascript/cookie.js'
 import axios from 'axios';
 
 class Header extends Component {
@@ -29,10 +30,10 @@ class Header extends Component {
       <div style={style.container}>
         <Navbar />
         {
-        this.props.userInfo.login
+        getCookie('ifUser') === 'true'
         ?
         <div style={style.menu}>
-          <Menu logout={() => this.logout()} title={ this.props.userInfo.name } />
+          <Menu logout={() => this.logout()} title={ this.props.userInfo.name || '' } />
         </div>
         :
         <div>
