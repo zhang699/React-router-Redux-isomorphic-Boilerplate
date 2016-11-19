@@ -23,7 +23,7 @@ const style = {
   title: {
     textAlign: 'center',
     height: '50px',
-    width: '250px',
+    width: '450px',
     fontSize: '30px'
   }
 }
@@ -67,14 +67,12 @@ export default class ArticleModal extends React.Component {
     findDOMNode(this.refs.div1).addEventListener('keydown',(e) => {
       console.log(this.refs.div1.innerHTML)
     });
-
+    const context = this;
     findDOMNode(this.refs.fileInput).addEventListener("change",() => {
       if (findDOMNode(this.refs.fileInput).files && findDOMNode(this.refs.fileInput).files[0]) {
         var FR= new FileReader();
         FR.onload = function(e) {
-          //document.getElementById("img").src = e.target.result;
           let base64 = e.target.result.replace(/^data:image\/(png|jpg);base64,/, "");
-          console.log(base64)
 
           var xhttp = new XMLHttpRequest();
           xhttp.open('POST','https://api.imgur.com/3/image',true)
@@ -83,11 +81,14 @@ export default class ArticleModal extends React.Component {
           xhttp.send(JSON.stringify({'image': base64}));
           xhttp.onreadystatechange = function() {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
-              console.log(JSON.parse(xhttp.responseText).data.link);
+              var para = document.createElement("img");
+              para.height = 150;
+              para.src = JSON.parse(xhttp.responseText).data.link;
+              findDOMNode(context.refs.div1).appendChild(para);
             }
           };
         };
-        FR.readAsDataURL( findDOMNode(this.refs.fileInput).files[0] );
+        FR.readAsDataURL(findDOMNode(this.refs.fileInput).files[0]);
       };
     });
   }
