@@ -11,7 +11,6 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
 import { api } from './api.js';
 import { post, get } from 'prore';
-import ioServer from './ioServer.js'
 
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,7 +30,23 @@ app.use(session({
   })
 }));
 
-ioServer(io);
+//SOCKET.IO
+io.on('connection', function(socket){
+	console.log('a user connected');
+	//發表文章
+	socket.on('postArticle', function(){
+		post({
+			host: 'localhost',
+			port: '3001',
+			path: '/getArticle'
+		},'hi')
+		.then(function(data){
+			socket.broadcast.emit('updateArticle',JSON.parse(data));//broadcast傳給所有人除了自己
+			socket.emit('updateArticle',JSON.parse(data));//加上傳給自己的socket
+		});
+	});
+});
+
 api(app);//引入api.js
 
 
