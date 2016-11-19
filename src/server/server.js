@@ -10,7 +10,8 @@ var webpackHotMiddleware = require('webpack-hot-middleware');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
 import { api } from './api.js';
-import { post, get } from 'prore'
+import { post, get } from 'prore';
+import ioServer from './ioServer.js'
 
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,26 +25,13 @@ app.use(session({
   resave: false, //don't save session if unmodified
   secret: 'yicheng',
   key: 'auth_token',//cookie name
-  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 1},//1 days
   store: new MongoStore({
 		url:'mongodb://forclass1:test123@ds013898.mlab.com:13898/forclass'
   })
 }));
 
-io.on('connection', function(socket){
-  console.log('a user connected');
-	socket.on('postArticle', function(){
-		post({
-			host: 'localhost',
-			port: '3001',
-			path: '/getArticle'
-		},'hi')
-		.then(function(data){
-			socket.broadcast.emit('updateArticle',JSON.parse(data));//broadcast傳給所有人除了自己
-			socket.emit('updateArticle',JSON.parse(data));//加上傳給自己的socket
-		});
-  });
-});
+ioServer(io);
 api(app);//引入api.js
 
 

@@ -1,4 +1,4 @@
-export default ioServer = () => {
+ const ioServer = (io) => {
 
   io.on('connection', function(socket){
 
@@ -19,3 +19,5 @@ export default ioServer = () => {
 
   });
 }
+
+export default ioServer;
