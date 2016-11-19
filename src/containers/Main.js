@@ -14,13 +14,20 @@ const style = {
   articleContainer: {
     border: '1px solid orange',
     opacity: '0.2',
-    height: '100vh',
+    height: '100%',
     width: '70%',
     margin:' 0 auto'
   },
   postBtn: {
     position: 'fixed',
     right: '50px'
+  },
+  title: {
+    fontSize: '25px'
+  },
+  article: {
+    borderBottom: '1px solid black',
+    height: '32px'
   }
 }
 
@@ -36,7 +43,6 @@ class Main extends Component {
   componentDidMount() {
     const context = this;
     socket.on('updateArticle',function(msg){
-      console.log('received')
       const payload = msg[msg.length-1];
       context.props.addArticleAction({
         _id: payload._id,
@@ -68,7 +74,9 @@ class Main extends Component {
         <div style={style.articleContainer}>
           {this.props.articles.map((i) => {
             return (
-              <div key={i._id}>{i.title}</div>
+              <div style={style.article} key={i._id}>
+                <div style={style.title}>{i.title}</div>
+              </div>
             )
           })}
         </div>

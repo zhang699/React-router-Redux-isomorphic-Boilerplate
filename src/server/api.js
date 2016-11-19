@@ -1,6 +1,5 @@
 import { User, Post } from './DB.js';
 
-
 exports.api = (app) => {
 
 app.post('/getArticle',function(req,res){

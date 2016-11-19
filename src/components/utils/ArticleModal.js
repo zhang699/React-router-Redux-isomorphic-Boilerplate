@@ -3,6 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
+import { findDOMNode } from 'react-dom';
 /**
  * A modal dialog can only be closed by selecting one of the actions.
  */
@@ -16,6 +17,8 @@ const style = {
     width: '100%',
     height: '50%',
     fontSize: '20px',
+    border: '1px solid black',
+    outline: 'none'
   },
   title: {
     textAlign: 'center',
@@ -34,10 +37,7 @@ export default class ArticleModal extends React.Component {
       content: '',
     }
   }
-  userInput = (e) => {
-    this.setState({ content: e.target.value });
-  }
-  userInput1 = (e) => {
+  titleInput = (e) => {
     this.setState({ title: e.target.value });
   }
   handleClose = () => {
@@ -62,7 +62,35 @@ export default class ArticleModal extends React.Component {
       console.log(e)
     })
   }
+  componentDidMount () {
 
+    findDOMNode(this.refs.div1).addEventListener('keydown',(e) => {
+      console.log(this.refs.div1.innerHTML)
+    });
+
+    findDOMNode(this.refs.fileInput).addEventListener("change",() => {
+      if (findDOMNode(this.refs.fileInput).files && findDOMNode(this.refs.fileInput).files[0]) {
+        var FR= new FileReader();
+        FR.onload = function(e) {
+          //document.getElementById("img").src = e.target.result;
+          let base64 = e.target.result.replace(/^data:image\/(png|jpg);base64,/, "");
+          console.log(base64)
+
+          var xhttp = new XMLHttpRequest();
+          xhttp.open('POST','https://api.imgur.com/3/image',true)
+          xhttp.setRequestHeader("Content-type", "application/json");
+          xhttp.setRequestHeader("Authorization", "Client-ID b50a7351eee91f0");
+          xhttp.send(JSON.stringify({'image': base64}));
+          xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+              console.log(JSON.parse(xhttp.responseText).data.link);
+            }
+          };
+        };
+        FR.readAsDataURL( findDOMNode(this.refs.fileInput).files[0] );
+      };
+    });
+  }
   render() {
     const actions = [
       <FlatButton
@@ -91,13 +119,15 @@ export default class ArticleModal extends React.Component {
           <input
             style={style.title}
             placeholder="請輸入標題"
-            onChange={(e) => this.userInput1(e)} >
+            onChange={(e) => this.titleInput(e)} >
           </input>
-          <textarea
+          <input ref="fileInput" type='file' />
+          <div
+            ref="div1"
+            contentEditable="true"
             placeholder="請輸入文章內容"
-            onChange={(e) => this.userInput(e)}
             style={style.textarea} >
-          </textarea>
+          </div>
         </div>
         </Dialog>
       </div>
