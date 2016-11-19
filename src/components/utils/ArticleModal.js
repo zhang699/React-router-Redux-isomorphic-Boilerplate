@@ -66,6 +66,7 @@ export default class ArticleModal extends React.Component {
 
     findDOMNode(this.refs.div1).addEventListener('keydown',(e) => {
       console.log(this.refs.div1.innerHTML)
+      this.setState({ content: this.refs.div1.innerHTML })
     });
     const context = this;
     findDOMNode(this.refs.fileInput).addEventListener("change",() => {

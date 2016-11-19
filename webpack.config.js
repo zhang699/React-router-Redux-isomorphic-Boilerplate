@@ -23,11 +23,15 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel',
-        exclude: ['/node_modules/','/src/server/','/src/client'],
+        exclude: ['/node_modules/','/src/server/','/src/client',],
         query: {
           presets: ['react', 'es2015','stage-0', 'react-hmre'],
           cacheDirectory: true
         },
+      },
+      {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader'
       }
     ]
   }

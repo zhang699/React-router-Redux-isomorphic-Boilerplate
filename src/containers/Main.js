@@ -7,28 +7,15 @@ import SimpleDialog from '../components/utils/SimpleDialog.js';
 import ArticleModal from '../components/utils/ArticleModal.js'
 import { post } from 'prore';
 import actions from '../redux/actions/addArticle.js'
+import ArticleBlock from '../components/utils/ArticleBlock/';
 
 const style = {
   container: {
-  },
-  articleContainer: {
-    border: '1px solid orange',
-    opacity: '0.2',
-    height: '100%',
-    width: '70%',
-    margin:' 0 auto'
   },
   postBtn: {
     position: 'fixed',
     right: '50px'
   },
-  title: {
-    fontSize: '25px'
-  },
-  article: {
-    borderBottom: '1px solid black',
-    height: '32px'
-  }
 }
 
 class Main extends Component {
@@ -71,15 +58,7 @@ class Main extends Component {
           :
           ''
         }
-        <div style={style.articleContainer}>
-          {this.props.articles.map((i) => {
-            return (
-              <div style={style.article} key={i._id}>
-                <div style={style.title}>{i.title}</div>
-              </div>
-            )
-          })}
-        </div>
+          <ArticleBlock articles={this.props.articles} />
       </div>
     )
   }
