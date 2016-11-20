@@ -4,17 +4,19 @@ import { bindActionCreators } from 'redux'
 import List from '../components/List.js'
 import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from '../components/utils/SimpleDialog.js';
-import ArticleModal from '../components/utils/ArticleModal.js'
+import ArticlePostModal from '../components/utils/ArticlePostModal.js';
+import ArticleContentModal from '../components/utils/ArticleContentModal.js';
 import { post } from 'prore';
-import actions from '../redux/actions/addArticle.js'
+import actions from '../redux/actions/addArticle.js';
 import ArticleBlock from '../components/utils/ArticleBlock/';
+import Loading from '../components/utils/Loading/';
 
 const style = {
   container: {
   },
   postBtn: {
     position: 'fixed',
-    right: '50px'
+    right: '50px',
   },
 }
 
@@ -22,7 +24,8 @@ class Main extends Component {
   constructor() {
     super();
     this.state = {
-      showArticleModal: false,
+      articlePostModal: false,
+      articleContentModal: false,
       dialog: false,
       dialogText: ''
     }
@@ -42,13 +45,17 @@ class Main extends Component {
   }
 
   postArticle() {
-    this.setState({ showArticleModal: true })
+    this.setState({ articlePostModal: true })
+  }
+  articleClick(e,id) {
+    this.setState({ articleContentModal: true })
+    console.log(id)
   }
   render() {
     return (
       <div style={style.container}>
         { this.state.dialog ? <SimpleDialog content={this.state.dialogText} context={this} /> : '' }
-        { this.state.showArticleModal ? <ArticleModal user={this.props.user} context={this} /> : '' }
+        { this.state.articlePostModal ? <ArticlePostModal user={this.props.user} context={this} /> : '' }
         { this.props.user.login
           ?
           <RaisedButton
@@ -58,7 +65,11 @@ class Main extends Component {
           :
           ''
         }
-          <ArticleBlock articles={this.props.articles} />
+          <ArticleBlock articleClick={(e,id) => this.articleClick(e,id)} articles={this.props.articles} />
+          { this.state.articleContentModal ? <ArticleContentModal user={this.props.user} context={this} /> : '' }
+          <div style={{width:'100%', height: '200px'}}>
+            <Loading />
+          </div>
       </div>
     )
   }

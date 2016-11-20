@@ -50,7 +50,8 @@ const style= {
   container: {
     width: '100%',
     height: '48px',
-    background: 'yellow',
+    background: 'white',
+    boxShadow: '4px 4px 9px #888888',
     position: 'fixed',
     top: '0px',
     zIndex: '10000'
@@ -68,7 +69,6 @@ const style= {
   menu: {
     marginTop: '-50px',
     float: 'right',
-    marginRight: '1%'
   }
 }
 

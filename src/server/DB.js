@@ -1,5 +1,7 @@
-var mongoose = require("mongoose");
-mongoose.connect('mongodb://forclass1:test123@ds013898.mlab.com:13898/forclass',function(err){
+import mongoose from 'mongoose';
+import config from '../config.js';
+
+mongoose.connect(config.dbURL,function(err){
 	if(err){throw err};
 });
 var db = mongoose.connection;
@@ -12,7 +14,7 @@ db.once('open', function() {
 exports.User = mongoose.model('users', new mongoose.Schema({
 	account:{type: String, unique: true},
 	password: String,
-  email: String,
+  email: {type: String, unique: true},
   name: String,
   RegistedDate: String
 }));

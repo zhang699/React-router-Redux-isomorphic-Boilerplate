@@ -41,12 +41,12 @@ export default class ArticleModal extends React.Component {
     this.setState({ title: e.target.value });
   }
   handleClose = () => {
-    this.props.context.setState({showArticleModal: false});
+    this.props.context.setState({articlePostModal: false});
   };
 
   handleConfirm = () => {
     const context = this.props.context;
-    this.props.context.setState({showArticleModal: false});
+    this.props.context.setState({articlePostModal: false});
     axios.post('/postArticle', {
         user: this.props.user.name,
         account: this.props.user.account,
@@ -113,7 +113,7 @@ export default class ArticleModal extends React.Component {
           title="發表文章"
           actions={actions}
           modal={true}
-          open={this.props.context.state.showArticleModal}
+          open={this.props.context.state.articlePostModal}
           contentStyle={style.contentStyle}
           bodyStyle={style.bodyStyle}
         >

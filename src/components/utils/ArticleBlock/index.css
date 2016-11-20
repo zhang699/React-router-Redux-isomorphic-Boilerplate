@@ -1,3 +1,4 @@
 .articleBlock:hover{
-  background: gray
+  background: #efefef;
+  cursor: pointer;
 }
