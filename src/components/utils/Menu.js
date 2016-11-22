@@ -1,6 +1,7 @@
 import React from 'react';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
+import { browserHistory } from 'react-router';
 
 const styles = {
   customWidth: {
@@ -16,7 +17,12 @@ export default class DropDownMenuSimpleExample extends React.Component {
   }
 
   handleChange = (event, index, value) => {
+
+    console.log(index)
     switch (index) {
+      case 1:
+        browserHistory.push('/personalinfo');
+        return
       case 4:
         this.props.logout();
         return
@@ -34,7 +40,7 @@ export default class DropDownMenuSimpleExample extends React.Component {
           autoWidth={false}
         >
           <MenuItem value={1} primaryText={ `使用者： ${this.props.title}` } />
-          <MenuItem value={2} primaryText="Every Night" />
+          <MenuItem value={2} primaryText="個人資料設定" />
           <MenuItem value={3} primaryText="Weeknights" />
           <MenuItem value={4} primaryText="Weekends" />
           <MenuItem value={5} primaryText="登出" />

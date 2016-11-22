@@ -16,6 +16,7 @@ exports.User = mongoose.model('users', new mongoose.Schema({
 	password: String,
   email: {type: String, unique: true},
   name: String,
+	avatar: String,
   RegistedDate: String
 }));
 //發表文章

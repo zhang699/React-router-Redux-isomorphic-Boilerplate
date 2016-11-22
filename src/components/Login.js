@@ -1,5 +1,5 @@
-import React,{Component} from 'react';
-import {connect} from 'react-redux'
+import React,{ Component } from 'react';
+import { connect } from 'react-redux'
 import actions from '../redux/actions/userInfo.js'
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -90,9 +90,10 @@ const style = {
   }
 }
 
-const mapStateToProp = (state) => {
-	return state
-}
+const mapStateToProp = (state) => ({
+  
+})
+
 
 export default connect(mapStateToProp,{
   userInfoAction:actions.userInfo,

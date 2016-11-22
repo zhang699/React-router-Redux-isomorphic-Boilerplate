@@ -6,7 +6,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from '../components/utils/SimpleDialog.js';
 import ArticlePostModal from '../components/utils/ArticlePostModal.js';
 import ArticleContentModal from '../components/utils/ArticleContentModal.js';
-import { post } from 'prore';
 import actions from '../redux/actions/addArticle.js';
 import ArticleBlock from '../components/utils/ArticleBlock/';
 import Loading from '../components/utils/Loading/';

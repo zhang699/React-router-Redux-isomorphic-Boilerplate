@@ -83,6 +83,7 @@ app.get('*', (req, res) => {
 	}
 
 ///如在server fetch 時用get 會因為在app.get('*'）內，造成socket hang up
+///axops
 	 post({
 		 host: 'localhost',
 		 port: '3001',
@@ -90,10 +91,6 @@ app.get('*', (req, res) => {
 	 },'hi')
 	 .then(function(data){
 		 initialState.article = JSON.parse(data);
-
-
-
-
 
 	const store = configureStore(initialState);
 	const muiTheme = getMuiTheme({
@@ -121,6 +118,9 @@ app.get('*', (req, res) => {
   });
 });
 
+process.on('uncaughtException', function (err) {
+    res.send(500);
+});
 })
 
 const renderFullPage = (html, preloadedState) => (`

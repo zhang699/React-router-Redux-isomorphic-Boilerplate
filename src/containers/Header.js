@@ -20,6 +20,7 @@ class Header extends Component {
     axios.post('/logout', {})
       .then(function (response) {
         context.props.logout();
+        browserHistory.push('/login')
       })
       .catch(function (error) {
         console.log(error);

@@ -1,6 +1,8 @@
 import { User, Post } from './DB.js';
 import { sendMail } from './utils/mail.js';
 import crypto from 'crypto';
+const md5  = crypto.createHash('md5');
+
 
 exports.api = (app) => {
 
@@ -13,12 +15,19 @@ app.post('/getArticle',function(req,res){
 })
 
 app.get('/getUser',function(req,res){
-	User.find({account:req.session.user},{_id:0,account:1,email:1,name:1})
+	User.find({account:req.session.user},{_id:0,account:1,email:1,name:1,avatar:1,RegistedDate:1})
 		.then(data => {
 			res.end(JSON.stringify(data[0]));
 		})
 		.catch(err => console.log(err));
 })
+app.get('/checkLogin',(req,res) => {
+	console.log(123)
+	if(typeof req.session.user === 'string') {
+		res.json({ login :true });
+	}
+})
+
 
 app.post('*',function(req,res,next){
 	if(req.connection.remoteAddress !== '127.0.0.1'){
@@ -71,6 +80,7 @@ app.post('/signup',function(req,res){
 					password: req.body.password,
 					email: req.body.email,
 					name: req.body.nickName,
+					avatar: `http://www.gravatar.com/avatar/${md5.update(req.body.email).digest('hex')}`,
 					RegistedDate: new Date()
 				});
 				user.save()
@@ -102,6 +112,12 @@ app.post('/postArticle',function(req,res) {
 		});
 	}
 })
+
+app.put('/UpdateUserInfo',(req,res) => {
+	console.log(req.body.avatar)
+	res.json({ok:'ok'})
+})
+
 
 
 
