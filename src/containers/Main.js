@@ -38,6 +38,7 @@ class Main extends Component {
         title: payload.title,
         content: payload.content,
         author: payload.posterAccount,
+        avatar: payload.avatar,
         date: payload.PostDate,
       });
     })
@@ -65,7 +66,15 @@ class Main extends Component {
           ''
         }
           <ArticleBlock articleClick={(e,id) => this.articleClick(e,id)} articles={this.props.articles} />
-          { this.state.articleContentModal ? <ArticleContentModal user={this.props.user} context={this} /> : '' }
+          { this.state.articleContentModal
+            ?
+            <ArticleContentModal
+              user={this.props.user}
+              context={this}
+            />
+            :
+            ''
+          }
           <div style={{width:'100%', height: '200px'}}>
             <Loading />
           </div>

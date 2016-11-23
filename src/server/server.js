@@ -41,6 +41,7 @@ io.on('connection', function(socket){
 			path: '/getArticle'
 		},'hi')
 		.then(function(data){
+			console.log(JSON.parse(data))
 			socket.broadcast.emit('updateArticle',JSON.parse(data));//broadcast傳給所有人除了自己
 			socket.emit('updateArticle',JSON.parse(data));//加上傳給自己的socket
 		});

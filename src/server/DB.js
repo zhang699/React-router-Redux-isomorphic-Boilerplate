@@ -29,5 +29,6 @@ exports.Post = mongoose.model('articles', new mongoose.Schema({
 	posterName: String,
 	title: String,
   content: String,
+	avatar: String,
   PostDate: String
 }));

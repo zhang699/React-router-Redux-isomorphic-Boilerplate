@@ -106,6 +106,7 @@ app.post('/postArticle',function(req,res) {
 			posterName: req.body.name,
 			title: req.body.title,
 		  content: req.body.content,
+			avatar: req.body.avatar,
 		  PostDate: new Date()
 		});
 		post.save()
