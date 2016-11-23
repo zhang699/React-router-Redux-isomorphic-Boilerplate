@@ -23,12 +23,11 @@ const style = {
     height: '50%',
     fontSize: '20px',
     border: '1px solid black',
-    outline: 'none'
+    outline: 'none',
+    overflow: 'scroll'
   },
   title: {
-    textAlign: 'center',
     height: '50px',
-    width: '450px',
     fontSize: '30px'
   }
 }
@@ -42,34 +41,22 @@ export default class ArticleContentModal extends React.Component {
       content: '',
     }
   }
-  titleInput = (e) => {
-    this.setState({ title: e.target.value });
-  }
   handleClose = () => {
     this.props.context.setState({articleContentModal: false});
   };
 
-  componentDidMount () {
-
-  }
   render() {
     const actions = [
       <FlatButton
-        label="Cancel"
+        label="關閉"
         primary={true}
         onTouchTap={this.handleClose}
       />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        onTouchTap={this.handleConfirm}
-      />,
     ];
-
     return (
       <div>
         <Dialog
-          title="文章標題"
+          title=""
           actions={actions}
           modal={false}
           open={this.props.context.state.articleContentModal}
@@ -77,10 +64,14 @@ export default class ArticleContentModal extends React.Component {
           bodyStyle={style.bodyStyle}
           onRequestClose={this.handleClose}
         >
-        <div style={{height: '600px'}}>
+        <div style={style.title}>{this.props.activeArticle.title}</div>
+        <div style={{height: '700px'}}>
           <div
             ref="div1"
-            style={style.textarea} >
+            style={style.textarea}
+            dangerouslySetInnerHTML={{
+            __html:this.props.activeArticle.content
+           }}>
           </div>
         </div>
         </Dialog>

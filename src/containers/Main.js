@@ -25,6 +25,7 @@ class Main extends Component {
     this.state = {
       articlePostModal: false,
       articleContentModal: false,
+      activeArticle: '',
       dialog: false,
       dialogText: ''
     }
@@ -49,7 +50,11 @@ class Main extends Component {
   }
   articleClick(e,id) {
     this.setState({ articleContentModal: true })
-    console.log(id)
+    console.log(this.props.articles.forEach( i => {
+      if (i._id === id ){
+        this.setState({ activeArticle: i })
+      }
+    }))
   }
   render() {
     return (
@@ -71,6 +76,7 @@ class Main extends Component {
             <ArticleContentModal
               user={this.props.user}
               context={this}
+              activeArticle={this.state.activeArticle}
             />
             :
             ''

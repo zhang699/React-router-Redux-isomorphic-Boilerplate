@@ -15,10 +15,11 @@ const style = {
   textarea: {
     marginTop: '5px',
     width: '100%',
-    height: '50%',
     fontSize: '20px',
     border: '1px solid black',
-    outline: 'none'
+    outline: 'none',
+    overflow: 'scroll',
+    height: '250px'
   },
   title: {
     textAlign: 'center',
