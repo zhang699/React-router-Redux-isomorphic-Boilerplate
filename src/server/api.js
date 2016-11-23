@@ -1,7 +1,7 @@
 import { User, Post } from './DB.js';
 import { sendMail } from './utils/mail.js';
 import crypto from 'crypto';
-const md5  = crypto.createHash('md5');
+
 
 
 exports.api = (app) => {
@@ -15,7 +15,7 @@ app.post('/getArticle',function(req,res){
 })
 
 app.get('/getUser',function(req,res){
-	User.find({account:req.session.user},{_id:0,account:1,email:1,name:1,avatar:1,RegistedDate:1})
+	User.find({account:req.session.user},{_id:0,account:1,email:1,name:1,avatar:1,RegistedDate:1,mobile:1,address:1,hobby:1,birthday:1})
 		.then(data => {
 			res.end(JSON.stringify(data[0]));
 		})
@@ -75,13 +75,18 @@ app.post('/signup',function(req,res){
 				}
 			})
 			.then(() => {
+				const md5  = crypto.createHash('md5');
 				let user = new User({
 					account: req.body.account,
 					password: req.body.password,
 					email: req.body.email,
 					name: req.body.nickName,
 					avatar: `http://www.gravatar.com/avatar/${md5.update(req.body.email).digest('hex')}`,
-					RegistedDate: new Date()
+					RegistedDate: new Date(),
+					mobile: '',
+					address: '',
+					hobby: '',
+					birthday: ''
 				});
 				user.save()
 				.catch(err => console.log(err));
@@ -114,8 +119,22 @@ app.post('/postArticle',function(req,res) {
 })
 
 app.put('/UpdateUserInfo',(req,res) => {
-	console.log(req.body.avatar)
-	res.json({ok:'ok'})
+	// console.log(req.body.avatar)
+	// res.json({ok:'ok'})
+	User.update({account: req.body.account},{
+		avatar: req.body.avatar,
+		name: req.body.name,
+		mobile: req.body.mobile,
+    address: req.body.address,
+    hobby: req.body.hobby,
+    birthday: req.body.birthday,
+	})
+	.then(() => (
+		res.end('更改成功')
+	))
+	.catch(err => {
+		res.end('更改錯誤');
+	});
 })
 
 

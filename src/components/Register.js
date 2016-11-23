@@ -90,6 +90,9 @@ class Register extends Component {
         console.log(error);
       });
   }
+  dialogConfirm = () => (
+    browserHistory.push('/login')
+  )
   render() {
     return (
       <div style={style.container}>
@@ -135,7 +138,7 @@ class Register extends Component {
           label="註冊" primary={true}
           style={style.login}
         />
-        { this.state.dialog ? <SimpleDialog content={this.state.dialogText} context={this} /> : '' }
+      { this.state.dialog ? <SimpleDialog content={this.state.dialogText} confirm={() => this.dialogConfirm()} context={this} /> : '' }
       </div>
     )
   }

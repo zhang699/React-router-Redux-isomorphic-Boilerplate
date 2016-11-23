@@ -17,7 +17,11 @@ exports.User = mongoose.model('users', new mongoose.Schema({
   email: {type: String, unique: true},
   name: String,
 	avatar: String,
-  RegistedDate: String
+  RegistedDate: String,
+	mobile: String,
+	address: String,
+	hobby: String,
+	birthday: String
 }));
 //發表文章
 exports.Post = mongoose.model('articles', new mongoose.Schema({
