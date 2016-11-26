@@ -5,7 +5,21 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 // confirm 點擊確認後的callback
 //
-export default class DialogExampleSimple extends React.Component {
+// close 用來dispatch wainting = false 的action
+//
+// <SimpleDialog context={this} />  注意，必須給入context
+//
+//在context 加上 state  : dialog   dialogText
+//
+//        {
+//           this.state.dialog
+//           ?
+//           <SimpleDialog context={this} />
+//           :
+//           ''
+//         }
+//
+export default class SimpleDialog extends React.Component {
   state = {
     open: true,
   };
@@ -13,6 +27,9 @@ export default class DialogExampleSimple extends React.Component {
 
   handleClose = () => {
     this.props.context.setState({ dialog:false });
+    if(this.props.close !== 'undefined') {
+      this.props.close();//dispatch  action
+    }
     if(typeof this.props.confirm !== 'undefined') {
       this.props.confirm();
     };

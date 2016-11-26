@@ -22,10 +22,16 @@ app.get('/getUser',function(req,res){
 		.catch(err => console.log(err));
 })
 app.get('/checkLogin',(req,res) => {
-	console.log(123)
 	if(typeof req.session.user === 'string') {
-		res.json({ login :true });
+		res.json({ login: true });
 	}
+})
+app.get('/userArticles/:user',(req,res) => {
+	console.log(req.params.user)
+	Post.find({posterAccount: req.params.user})
+	.then(data => {
+  	 res.end(JSON.stringify(data))
+	})
 })
 
 
@@ -138,6 +144,13 @@ app.put('/UpdateUserInfo',(req,res) => {
 	});
 })
 
+app.put('/updateArticle',(req,res) => {
+	console.log(req.body.content)
+	Post.update({ _id: req.body.id },{ $set : { "content" : req.body.content} } )
+		.then(data => {
+			 res.end(JSON.stringify(data))
+		})
+})
 
 
 

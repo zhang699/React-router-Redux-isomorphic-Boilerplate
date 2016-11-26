@@ -4,6 +4,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
 import SimpleDialog from './utils/SimpleDialog.js';
 import { browserHistory } from 'react-router';
+import { connect } from 'react-redux'
+import wait from '../redux/actions/waiting.js'
 
 class Register extends Component {
   constructor(props) {
@@ -76,6 +78,7 @@ class Register extends Component {
         this.setState({ dialogText: '您好，請填完所有欄位再點選' });
         return;
       };
+      this.props.pause();
     axios.post('/signup', {
         account: this.state.account,
         password: this.state.password,
@@ -150,4 +153,14 @@ const style = {
   }
 }
 
-export default Register;
+
+function  mapStateToProp(state){
+	return {
+    wait: state.waiting
+  }
+}
+
+export default connect(mapStateToProp,{
+  pause: wait.pause,
+  resume: wait.resume
+})(Register)

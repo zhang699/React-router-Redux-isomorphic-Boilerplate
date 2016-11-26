@@ -4,26 +4,22 @@ import { connect } from 'react-redux'
 import actions from '../redux/actions/userInfo.js'
 import Header from './Header.js'
 import axios from 'axios';
+import SimpleDialog from '../components/utils/SimpleDialog.js'
+import wait from '../redux/actions/waiting.js'
 
 import { browserHistory } from 'react-router';
 
 class App extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      dialogText: '等待中',
+      dialog: false
+    }
   }
 
   componentDidMount() {
 
-    // browserHistory.listen( location =>  {
-    //  if (location.pathname === '/personalinfo') {
-    //    if (this.props.userInfo.login === false) {
-    //      browserHistory.push('/login');
-    //    }
-    //
-    //  }
-    //
-    // });
     const context = this;
     axios.get('/getUser',{})
       .then(function (response) {
@@ -36,28 +32,28 @@ class App extends Component {
         console.log(error);
       });
   }
-  componentWillMount() {
-
-
-
-
-  }
 
   componentWillReceiveProps(nextProps) {
-    browserHistory.listen( location =>  {
-     if (location.pathname === '/login') {
-       if (nextProps.userInfo.login) {
-         browserHistory.push('/main');
-       }
-     }
-
-    });
-
+    // browserHistory.listen( location =>  {
+    //  if (location.pathname === '/login') {
+    //      if (nextProps.userInfo.login) {
+    //        browserHistory.push('/main');
+    //      }
+    //  }
+    // });
   }
 
   render() {
     return (
       <div>
+        {
+          this.props.wait
+          ?
+          <SimpleDialog close={() => this.props.resume()} context={this} />
+          :
+          ''
+        }
+
         <Header />
         <div style={style.content}>
         {this.props.children}
@@ -74,10 +70,14 @@ const style = {
 }
 
 function  mapStateToProp(state){
-
-	return state
+	return {
+    wait: state.waiting,
+    userInfo: state.userInfo
+  }
 }
 
 export default connect(mapStateToProp,{
   userInfoAction:actions.userInfo,
+  pause: wait.pause,
+  resume: wait.resume
 })(App)

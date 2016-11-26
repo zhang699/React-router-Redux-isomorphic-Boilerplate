@@ -11,6 +11,13 @@ import { findDOMNode } from 'react-dom';
  *   modal={false}
      onRequestClose={this.handleClose}
      讓點擊方框旁也可關閉
+
+     articleContentModal 須在parent的state加上
+
+     props:
+     contentEditable
+     confirmBtn
+     activeArticle
  */
 const style = {
   contentStyle: {
@@ -44,20 +51,32 @@ export default class ArticleContentModal extends React.Component {
   handleClose = () => {
     this.props.context.setState({articleContentModal: false});
   };
-
   render() {
-    const actions = [
+    const action1 = [
       <FlatButton
         label="關閉"
         primary={true}
         onTouchTap={this.handleClose}
       />,
+      <FlatButton
+        label="確認"
+        primary={true}
+        onTouchTap={this.props.context.handleConfirm}
+      />
+    ];
+
+    const action2 = [
+      <FlatButton
+        label="關閉"
+        primary={true}
+        onTouchTap={this.handleClose}
+      />
     ];
     return (
       <div>
         <Dialog
           title=""
-          actions={actions}
+          actions={ this.props.confirmBtn ? action1 : action2}
           modal={false}
           open={this.props.context.state.articleContentModal}
           contentStyle={style.contentStyle}
@@ -67,6 +86,7 @@ export default class ArticleContentModal extends React.Component {
         <div style={style.title}>{this.props.activeArticle.title}</div>
         <div style={{height: '700px'}}>
           <div
+            contentEditable={this.props.contentEditable}
             ref="div1"
             style={style.textarea}
             dangerouslySetInnerHTML={{

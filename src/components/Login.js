@@ -6,6 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from './utils/SimpleDialog.js';
 import axios from 'axios';
 import { browserHistory } from 'react-router'
+import wait from '../redux/actions/waiting.js'
 
 class Login extends Component {
   constructor(props) {
@@ -91,7 +92,7 @@ const style = {
 }
 
 const mapStateToProp = (state) => ({
-  
+
 })
 
 
