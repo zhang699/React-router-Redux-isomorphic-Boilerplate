@@ -8,7 +8,7 @@ exports.api = (app) => {
 
 
 app.post('/getArticle',function(req,res){
-	Post.find({}).sort({PostDate : -1})
+	Post.find({}).sort({lastModify : -1})
   	.then(data => {
 	  	 res.end(JSON.stringify(data))
 		})
@@ -27,8 +27,8 @@ app.get('/checkLogin',(req,res) => {
 	}
 })
 app.get('/userArticles/:user',(req,res) => {
-	console.log(req.params.user)
 	Post.find({posterAccount: req.params.user})
+	.sort({PostDate : -1})
 	.then(data => {
   	 res.end(JSON.stringify(data))
 	})
@@ -113,7 +113,10 @@ app.post('/postArticle',function(req,res) {
 			title: req.body.title,
 		  content: req.body.content,
 			avatar: req.body.avatar,
-		  PostDate: Date.now() + 1000 * 60 * 60 * 8 //因此預設為UTC+0 要改為UTC+8
+		  PostDate: Date.now() + 1000 * 60 * 60 * 8, //因此預設為UTC+0 要改為UTC+8
+			lastModify: Date.now() + 1000 * 60 * 60 * 8,
+			comments: '',
+			tag: req.body.tag,
 		});
 		post.save()
 		.then(() => {
@@ -145,8 +148,10 @@ app.put('/UpdateUserInfo',(req,res) => {
 })
 
 app.put('/updateArticle',(req,res) => {
-	console.log(req.body.content)
-	Post.update({ _id: req.body.id },{ $set : { "content" : req.body.content} } )
+	Post.update({ _id: req.body.id },{ $set : {
+		"content" : req.body.content,
+		"lastModify" : Date.now() + 1000 * 60 * 60 * 8
+		}})
 		.then(data => {
 			 res.end(JSON.stringify(data))
 		})

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import actions from '../redux/actions/userInfo.js'
 import Header from './Header.js'
 import axios from 'axios';
-import SimpleDialog from '../components/utils/SimpleDialog.js'
+import SimpleDialog from '../components/utils/Dialogs/SimpleDialog.js'
 import wait from '../redux/actions/waiting.js'
 
 import { browserHistory } from 'react-router';

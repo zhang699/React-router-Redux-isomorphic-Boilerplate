@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import actions from '../redux/actions/userInfo.js'
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import SimpleDialog from './utils/SimpleDialog.js';
+import SimpleDialog from './utils/Dialogs/SimpleDialog.js';
 import axios from 'axios';
 import { browserHistory } from 'react-router'
 import wait from '../redux/actions/waiting.js'

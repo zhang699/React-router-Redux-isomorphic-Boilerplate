@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
-import SimpleDialog from './utils/SimpleDialog.js';
+import SimpleDialog from './utils/Dialogs/SimpleDialog.js';
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router';
 import { findDOMNode } from 'react-dom';

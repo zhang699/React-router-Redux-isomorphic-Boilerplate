@@ -3,10 +3,10 @@ import {connect} from 'react-redux'
 import { bindActionCreators } from 'redux'
 import List from '../components/List.js'
 import RaisedButton from 'material-ui/RaisedButton';
-import SimpleDialog from '../components/utils/SimpleDialog.js';
-import ArticlePostModal from '../components/utils/ArticlePostModal.js';
-import ArticleContentModal from '../components/utils/ArticleContentModal.js';
-import actions from '../redux/actions/addArticle.js';
+import SimpleDialog from '../components/utils/Dialogs/SimpleDialog.js';
+import ArticlePostModal from '../components/utils/Dialogs/ArticlePostModal.js';
+import ArticleContentModal from '../components/utils/Dialogs/ArticleContentModal.js';
+import { addArticle } from '../redux/actions/article.js';
 import ArticleBlock from '../components/utils/ArticleBlock/';
 import Loading from '../components/utils/Loading/';
 
@@ -32,7 +32,7 @@ class Main extends Component {
   }
   componentDidMount() {
     const context = this;
-    socket.on('updateArticle',function(msg){
+    socket.on('addArticle',function(msg){//新增文章後的
       const payload = msg[0];
       context.props.addArticleAction({
         _id: payload._id,
@@ -41,6 +41,9 @@ class Main extends Component {
         author: payload.posterAccount,
         avatar: payload.avatar,
         date: payload.PostDate,
+        lastModify: payload.PostDate,
+        comments: payload.comments,
+        tag: payload.tag
       });
     })
   }
@@ -97,5 +100,5 @@ function mapStateToProp(state){
 }
 
 export default connect(mapStateToProp,{
-    addArticleAction: actions.addArticle,
+    addArticleAction: addArticle,
   })(Main)

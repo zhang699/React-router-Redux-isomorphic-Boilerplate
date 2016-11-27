@@ -10,8 +10,8 @@ import MenuItem from 'material-ui/MenuItem';
 import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import axios from 'axios';
 import Loading from '../components/utils/Loading/'
-import ArticleContentModal from './utils/ArticleContentModal.js';
-import action from '../redux/actions/addArticle.js'
+import ArticleContentModal from './utils/Dialogs/ArticleContentModal.js';
+import { editArticle } from '../redux/actions/article.js'
 
 const iconButtonElement = (
   <IconButton
@@ -149,5 +149,5 @@ const mapStateToProp = (state) => ({
 })
 
 export default connect(mapStateToProp,{
-  editArticle: action.editArticle
+  editArticle: editArticle
 })(MyArticle)

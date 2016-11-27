@@ -4,9 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
 import { findDOMNode } from 'react-dom';
-/**
- * A modal dialog can only be closed by selecting one of the actions.
- */
+
 const style = {
   contentStyle: {
     width: '90%',
@@ -18,14 +16,13 @@ const style = {
     fontSize: '20px',
     border: '1px solid black',
     outline: 'none',
-    overflow: 'scroll',
+    overflowY: 'scroll',
     height: '250px'
   },
   title: {
-    textAlign: 'center',
     height: '50px',
     width: '450px',
-    fontSize: '30px'
+    fontSize: '20px'
   },
   picBtn: {
     marginTop: '5px',
@@ -51,6 +48,7 @@ export default class ArticleModal extends React.Component {
     this.state = {
       title: '',
       content: '',
+      tag: '',
     }
   }
   titleInput = (e) => {
@@ -72,6 +70,7 @@ export default class ArticleModal extends React.Component {
         content: this.state.content,
         title: this.state.title,
         avatar: this.props.user.avatar,
+        tag: this.state.tag
       })
     .then((response) => {
       context.setState({ dialog:true })
@@ -143,6 +142,7 @@ export default class ArticleModal extends React.Component {
         <div style={{height: '600px'}}>
           <input
             style={style.title}
+            maxLength={15}
             placeholder="請輸入標題"
             onChange={(e) => this.titleInput(e)} >
           </input>

@@ -7,7 +7,9 @@ const style = {
     color: 'black',
     marginTop: '20px',
     marginTop: '37px',
-    marginLeft: '20px'
+    marginLeft: '20px',
+    display: 'flex',
+    flexDirection: 'column'
   },
   article: {
     borderBottom: '1px solid black',
@@ -30,8 +32,12 @@ const style = {
   avatar: {
     width: '50px',
     height:'59px',
-    marginTop: '20px',
+    marginTop: '30px',
     marginLeft: '20px'
+  },
+  author: {
+    fontSize: '10px',
+    color: 'gray'
   }
 }
 
@@ -44,9 +50,10 @@ const ArticleBlock = (props) => (
             <img height="50px" width="60px" src={i.avatar} />
           </div>
           <div style={style.title}>
-            {i.title}
+            <div>{i.title}</div>
+            <div style={style.author}>作者：{i.posterName}</div>
           </div>
-          <div style={style.date}>{(i.PostDate)}</div>
+          <div style={style.date}>最後修改：{(i.lastModify).replace(/[A-Z]/g, " ")}</div>
         </div>
       ))
     }
