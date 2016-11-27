@@ -27,7 +27,7 @@ export default class SimpleDialog extends React.Component {
 
   handleClose = () => {
     this.props.context.setState({ dialog:false });
-    if(this.props.close !== 'undefined') {
+    if(typeof this.props.close !== 'undefined') {
       this.props.close();//dispatch  action
     }
     if(typeof this.props.confirm !== 'undefined') {

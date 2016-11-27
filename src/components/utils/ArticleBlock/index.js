@@ -39,7 +39,7 @@ const ArticleBlock = (props) => (
   <div style={style.articleContainer}>
     {
       props.articles.map((i) => (
-        <div onClick={(e) => props.articleClick(e,i._id)} className="articleBlock"  style={style.article} key={i._id}>
+        <div onClick={(e) => props.articleClick(e,i._id)} className="articleBlock"  style={style.article} key={Math.random()}>
           <div style={style.avatar}>
             <img height="50px" width="60px" src={i.avatar} />
           </div>

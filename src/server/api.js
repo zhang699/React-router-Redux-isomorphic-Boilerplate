@@ -8,7 +8,7 @@ exports.api = (app) => {
 
 
 app.post('/getArticle',function(req,res){
-	Post.find({})
+	Post.find({}).sort({PostDate : -1})
   	.then(data => {
 	  	 res.end(JSON.stringify(data))
 		})
@@ -113,7 +113,7 @@ app.post('/postArticle',function(req,res) {
 			title: req.body.title,
 		  content: req.body.content,
 			avatar: req.body.avatar,
-		  PostDate: new Date()
+		  PostDate: Date.now() + 1000 * 60 * 60 * 8 //因此預設為UTC+0 要改為UTC+8
 		});
 		post.save()
 		.then(() => {

@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
 import { findDOMNode } from 'react-dom';
+import ListMsg from '../List.js'
 /**
  * A modal dialog can only be closed by selecting one of the actions.
  *
@@ -26,16 +27,22 @@ const style = {
   },
   textarea: {
     marginTop: '20px',
-    width: '100%',
-    height: '50%',
+    width: '102%',
+    height: '90%',
     fontSize: '20px',
-    border: '1px solid black',
     outline: 'none',
     overflow: 'scroll'
   },
   title: {
-    height: '50px',
+    height: '20px',
     fontSize: '30px'
+  },
+  levmsgLine: {
+    borderTop: '1px solid gray'
+  },
+  levmsgTitle: {
+    textAlign: 'center',
+    marginTop: '20px'
   }
 }
 
@@ -67,6 +74,11 @@ export default class ArticleContentModal extends React.Component {
 
     const action2 = [
       <FlatButton
+        label="留言"
+        primary={true}
+        onTouchTap={this.props.context.levmsg}
+      />,
+      <FlatButton
         label="關閉"
         primary={true}
         onTouchTap={this.handleClose}
@@ -75,15 +87,16 @@ export default class ArticleContentModal extends React.Component {
     return (
       <div>
         <Dialog
-          title=""
+          title={this.props.activeArticle.title}
+          actionsContainerStyle={style.btn}
           actions={ this.props.confirmBtn ? action1 : action2}
           modal={false}
           open={this.props.context.state.articleContentModal}
           contentStyle={style.contentStyle}
           bodyStyle={style.bodyStyle}
           onRequestClose={this.handleClose}
+          autoScrollBodyContent={true}
         >
-        <div style={style.title}>{this.props.activeArticle.title}</div>
         <div style={{height: '700px'}}>
           <div
             contentEditable={this.props.contentEditable}
@@ -94,6 +107,9 @@ export default class ArticleContentModal extends React.Component {
            }}>
           </div>
         </div>
+        <div style={style.levmsgLine}></div>
+        <div style={style.levmsgTitle}>留言內容</div>
+        <ListMsg />
         </Dialog>
       </div>
     );

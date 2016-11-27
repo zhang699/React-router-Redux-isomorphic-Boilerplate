@@ -33,7 +33,7 @@ class Main extends Component {
   componentDidMount() {
     const context = this;
     socket.on('updateArticle',function(msg){
-      const payload = msg[msg.length-1];
+      const payload = msg[0];
       context.props.addArticleAction({
         _id: payload._id,
         title: payload.title,

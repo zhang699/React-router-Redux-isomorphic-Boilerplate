@@ -30,5 +30,5 @@ exports.Post = mongoose.model('articles', new mongoose.Schema({
 	title: String,
   content: String,
 	avatar: String,
-  PostDate: String
+  PostDate: Date
 }));

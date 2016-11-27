@@ -11,6 +11,7 @@ import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import axios from 'axios';
 import Loading from '../components/utils/Loading/'
 import ArticleContentModal from './utils/ArticleContentModal.js';
+import action from '../redux/actions/addArticle.js'
 
 const iconButtonElement = (
   <IconButton
@@ -76,19 +77,22 @@ class MyArticle extends Component {
     console.log(e)
   }
   handleConfirm = () => {
+    const contentRef = this.refs.content1.refs.div1.innerHTML;
+    const articleID = this.state.activeArticle._id;
     this.setState({ articleContentModal: false })
     axios.put('/updateArticle',{
-      content: this.refs.content1.refs.div1.innerHTML,
-      id: this.state.activeArticle._id
+      content: contentRef,
+      id: articleID
     })
     .then((response) => {
-      console.log(response.data)
+      this.props.editArticle({
+        content: contentRef,
+        id: articleID
+      });
+      //更新畫面
       axios.get('/userArticles/' + this.props.userInfo.account)
       .then((response) => {
-        this.setState({ articles: response.data },() => {
-          console.log(this.state.articles)
-          this.forceUpdate()
-        })
+        this.setState({ articles: response.data });
       })
     })
   }
@@ -141,9 +145,9 @@ class MyArticle extends Component {
 
 const mapStateToProp = (state) => ({
   userInfo: state.userInfo,
-  articles: state.article
+  articles: state.article,
 })
 
 export default connect(mapStateToProp,{
-
+  editArticle: action.editArticle
 })(MyArticle)

@@ -198,7 +198,7 @@ const style = {
   left: {
     position: 'absolute',
     top: '180px',
-    left: '330px',
+    left: '20%',
     display: 'flex',
     flexDirection: 'column'
   }

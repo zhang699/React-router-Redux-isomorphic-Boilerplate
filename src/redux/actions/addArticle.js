@@ -1,5 +1,5 @@
 const actions = {
-	addArticle:(payload)=>{
+	addArticle: (payload) => {
 		return ({
 	   type:'ADD_ARTICLE',
      _id:payload._id,
@@ -10,6 +10,13 @@ const actions = {
      date:payload.date,
    })
   },
+  editArticle: (payload) => {
+    return ({
+      type: 'EDIT_ARTICLE',
+      _id: payload.id,
+      content: payload.content
+    })
+  }
 }
 
 export default actions
