@@ -32,6 +32,6 @@ exports.Post = mongoose.model('articles', new mongoose.Schema({
 	avatar: String,
   PostDate: Date,
 	lastModify: Date,
-	comments: String,
+	comments: Array,
 	tag: String
 }));

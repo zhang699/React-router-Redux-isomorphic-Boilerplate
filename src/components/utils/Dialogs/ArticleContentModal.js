@@ -4,8 +4,9 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
 import { findDOMNode } from 'react-dom';
-import ListMsg from '../../List.js'
-import LeaveMsgModal from './LeaveMsgModal.js'
+import ListMsg from '../../List.js';
+import LeaveMsgModal from './LeaveMsgModal.js';
+import SimpleDialog from '../../utils/Dialogs/SimpleDialog.js'
 /**
  * A modal dialog can only be closed by selecting one of the actions.
  *
@@ -56,21 +57,23 @@ export default class ArticleContentModal extends React.Component {
   constructor() {
     super();
     this.state = {
+      dialogText: '請先登入',
+      dialog: false,
       title: '',
       content: '',
       leaveMsgModal: false
     }
   }
-  handleLeaveMsg = () => {
-    console.log('okok')
-  }
   handleClose = () => {
     this.props.context.setState({articleContentModal: false});
   };
-  levmsg = () => {
-    console.log(2133)
-    this.setState({ leaveMsgModal: true })
-  }
+  levmsgModal = () => {
+    if(this.props.context.props.user.login === true) {
+      this.setState({ leaveMsgModal: true })
+    } else {
+      this.setState({ dialog: true })
+    }
+  };
   render() {
     const action1 = [
       <FlatButton
@@ -89,7 +92,7 @@ export default class ArticleContentModal extends React.Component {
       <FlatButton
         label="留言"
         primary={true}
-        onTouchTap={this.levmsg}
+        onTouchTap={this.levmsgModal}
       />,
       <FlatButton
         label="關閉"
@@ -127,6 +130,7 @@ export default class ArticleContentModal extends React.Component {
         <div style={style.levmsgTitle}>留言內容</div>
         <ListMsg />
         { this.state.leaveMsgModal ? <LeaveMsgModal context={this} /> : '' }
+        { this.state.dialog ? <SimpleDialog context={this} />  : ''}
         </Dialog>
       </div>
     );

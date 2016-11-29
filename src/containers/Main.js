@@ -53,11 +53,11 @@ class Main extends Component {
   }
   articleClick(e,id) {
     this.setState({ articleContentModal: true })
-    console.log(this.props.articles.forEach( i => {
+    this.props.articles.forEach( i => {
       if (i._id === id ){
         this.setState({ activeArticle: i })
       }
-    }))
+    });
   }
   render() {
     return (

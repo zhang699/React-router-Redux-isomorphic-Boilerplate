@@ -131,6 +131,7 @@ app.post('/postArticle',function(req,res) {
 app.put('/UpdateUserInfo',(req,res) => {
 	// console.log(req.body.avatar)
 	// res.json({ok:'ok'})
+	//
 	User.update({account: req.body.account},{
 		avatar: req.body.avatar,
 		name: req.body.name,
@@ -155,6 +156,28 @@ app.put('/updateArticle',(req,res) => {
 		.then(data => {
 			 res.end(JSON.stringify(data))
 		})
+})
+app.put('/leavemsg',(req,res) => {
+	console.log(req.body)
+	Post.findOne({ _id: req.body.id })
+	.then(data => {
+		let newComments = data.comments;
+		newComments.push({
+			title : req.body.title,
+			content : req.body.content,
+			authorAccount : req.body.authorAccount,
+			date: Date.now() + 1000 * 60 * 60 * 8
+		})
+	console.log(newComments)
+	Post.update({ _id: req.body.id },{ $set : {
+		comments: newComments,
+		lastModify : Date.now() + 1000 * 60 * 60 * 8
+		}})
+		.then(data => {
+			 res.end(JSON.stringify(data))
+		})
+	})
+
 })
 
 

@@ -21,6 +21,11 @@ export function userInfo(state = {},action){
 				email:'',
 				name:'',
 				avatar:'',
+				RegistedDate: '',
+				mobile: '',
+				address: '',
+				hobby: '',
+				birthday: '',
 				login:false
 			}
 		default:

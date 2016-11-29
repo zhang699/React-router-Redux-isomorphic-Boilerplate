@@ -78,7 +78,7 @@ app.get('*', (req, res) => {
 				text:'initial for demo'
 			}],
 			userInfo:{
-
+				login:false
 			},
 			article: []
 	}

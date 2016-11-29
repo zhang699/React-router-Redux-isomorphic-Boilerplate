@@ -5,8 +5,9 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from './utils/Dialogs/SimpleDialog.js';
 import axios from 'axios';
-import { browserHistory } from 'react-router'
-import wait from '../redux/actions/waiting.js'
+import { browserHistory } from 'react-router';
+import wait from '../redux/actions/waiting.js';
+import Loading from './utils/Loading/';
 
 class Login extends Component {
   constructor(props) {
@@ -17,7 +18,8 @@ class Login extends Component {
       accountCheck : true,
       passwordCheck : true,
       dialog: false,
-      dialogText: ''
+      dialogText: '',
+      loading: false
     }
   }
   checkAccount(e) {
@@ -37,12 +39,14 @@ class Login extends Component {
     this.setState({ passwordCheck: true })
   }
   sendRequest() {
+    this.setState({ loading: true });
     const context = this;//因.then會找不到this
     axios.post('/login', {
         account: this.state.account,
         password: this.state.password
       })
       .then(function (response) {
+        context.setState({ loading: false })
         context.setState({ dialogText:response.data })
         context.setState({ dialog: true });
         axios.get('/getUser',{})
@@ -63,6 +67,10 @@ class Login extends Component {
   }
   render() {
     return (
+      this.state.loading
+      ?
+      <Loading />
+      :
       <div style={style.container}>
         <TextField
           onBlur = {(e) => this.checkAccount(e) }

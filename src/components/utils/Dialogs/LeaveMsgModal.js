@@ -53,9 +53,27 @@ export default class LeaveMsgModal extends React.Component {
       content: '',
     }
   }
+  handleLeaveMsg = () => {
+    axios.put('/leavemsg',{
+      id: this.props.context.props.activeArticle._id,
+      title: this.state.title,
+      content: this.state.content,
+      authorAccount: this.props.context.props.context.props.user.account
+    })
+    .then((response) => {
+      console.log(response.data);
+    })
+  }
   handleClose = () => {
     this.props.context.setState({leaveMsgModal: false});
   };
+  titleInput = (e) => {
+    this.setState({ title: e.target.value })
+  }
+  contentInput = (e) => {
+    console.log(e.target.value)
+    this.setState({ content: e.target.value })
+  }
   render() {
     const action1 = [
       <FlatButton
@@ -66,7 +84,7 @@ export default class LeaveMsgModal extends React.Component {
       <FlatButton
         label="確認"
         primary={true}
-        onTouchTap={this.props.context.handleLeaveMsg}
+        onTouchTap={this.handleLeaveMsg}
       />
     ];
     return (
@@ -80,12 +98,18 @@ export default class LeaveMsgModal extends React.Component {
           bodyStyle={style.bodyStyle}
           onRequestClose={this.handleClose}
         >
-        <input placeholder="請輸入標題" style={style.titleInput} maxLength="15"></input>
+        <input
+          onChange={(e) => this.titleInput(e)}
+          placeholder="請輸入標題"
+          style={style.titleInput}
+          maxLength="15">
+        </input>
         <div style={{height: '100px'}}>
           <div
             contentEditable={true}
             ref="div1"
             style={style.textarea}
+            onChange={(e) => this.contentInput(e)}
           >
           </div>
         </div>
