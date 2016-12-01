@@ -9,6 +9,14 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
+const style = {
+  author: {
+    fontSize: '10px',
+    color: 'gray',
+    textAlign: 'center'
+  }
+}
+
 const iconButtonElement = (
   <IconButton
     touch={true}
@@ -19,81 +27,28 @@ const iconButtonElement = (
   </IconButton>
 );
 
-const rightIconMenu = (
-  <IconMenu iconButtonElement={iconButtonElement}>
-    <MenuItem>Reply</MenuItem>
-    <MenuItem>Forward</MenuItem>
-    <MenuItem>Delete</MenuItem>
-  </IconMenu>
-);
-
-const ListMsg = () => (
+const ListMsg = (props) => (
   <div>
-      <List>
-        <Subheader>留言</Subheader>
-        <ListItem
-          leftAvatar={<Avatar src="images/ok-128.jpg" />}
-          primaryText="Brunch this weekend?"
-          secondaryText={
-            <p>
-              <span style={{color: darkBlack}}>Brendan Lim</span> --
-              I&apos;ll be in your neighborhood doing errands this weekend. Do you want to grab brunch?
-            </p>
-          }
-          secondaryTextLines={2}
-        />
-        <Divider inset={true} />
-        <ListItem
-          leftAvatar={<Avatar src="images/kolage-128.jpg" />}
-          primaryText={
-            <p>Summer BBQ&nbsp;&nbsp;<span style={{color: lightBlack}}>4</span></p>
-          }
-          secondaryText={
-            <p>
-              <span style={{color: darkBlack}}>to me, Scott, Jennifer</span> --
-              Wish I could come, but I&apos;m out of town this weekend.
-            </p>
-          }
-          secondaryTextLines={2}
-        />
-        <Divider inset={true} />
-        <ListItem
-          leftAvatar={<Avatar src="images/uxceo-128.jpg" />}
-          primaryText="Oui oui"
-          secondaryText={
-            <p>
-              <span style={{color: darkBlack}}>Grace Ng</span> --
-              Do you have Paris recommendations? Have you ever been?
-            </p>
-          }
-          secondaryTextLines={2}
-        />
-        <Divider inset={true} />
-        <ListItem
-          leftAvatar={<Avatar src="images/kerem-128.jpg" />}
-          primaryText="Birdthday gift"
-          secondaryText={
-            <p>
-              <span style={{color: darkBlack}}>Kerem Suer</span> --
-              Do you have any ideas what we can get Heidi for her birthday? How about a pony?
-            </p>
-          }
-          secondaryTextLines={2}
-        />
-        <Divider inset={true} />
-        <ListItem
-          leftAvatar={<Avatar src="images/raquelromanp-128.jpg" />}
-          primaryText="Recipe to try"
-          secondaryText={
-            <p>
-              <span style={{color: darkBlack}}>Raquel Parrado</span> --
-              We should eat this: grated squash. Corn and tomatillo tacos.
-            </p>
-          }
-          secondaryTextLines={2}
-        />
-      </List>
+  {props.comments.map(i => (
+    <List>
+      <Subheader>留言</Subheader>
+      <ListItem
+        leftAvatar = {
+          <div>
+            <Avatar src="images/ok-128.jpg" />
+            <div style={style.author}>123a</div>
+          </div>
+        }>
+        <div>
+          <div>test</div>
+        </div>
+      </ListItem>
 
+
+     <Divider inset={true} />
+    </List>
+  ))
+  }
   </div>
 );
 

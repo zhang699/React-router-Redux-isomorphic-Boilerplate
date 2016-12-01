@@ -6,7 +6,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import SimpleDialog from './utils/Dialogs/SimpleDialog.js';
 import axios from 'axios';
 import { browserHistory } from 'react-router';
-import wait from '../redux/actions/waiting.js';
 import Loading from './utils/Loading/';
 
 class Login extends Component {

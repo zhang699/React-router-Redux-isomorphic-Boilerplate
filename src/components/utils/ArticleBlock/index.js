@@ -51,7 +51,7 @@ const ArticleBlock = (props) => (
           </div>
           <div style={style.title}>
             <div>{i.title}</div>
-            <div style={style.author}>作者：{i.posterName}</div>
+            <div style={style.author}>作者：{i.author}</div>
           </div>
           <div style={style.date}>最後修改：{(i.lastModify).replace(/[A-Z]/g, " ")}</div>
         </div>

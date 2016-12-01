@@ -1,45 +1,68 @@
 import { User, Post } from './DB.js';
 import { sendMail } from './utils/mail.js';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import config from '../config.js';
 
+const { jwtSecret } = config; 
+
+
+const authToken = (req,res,next) => {
+	const token = req.cookies.t;
+	if (token) {
+		jwt.verify(req.cookies.t, jwtSecret, (err, decoded) => {
+			if(decoded){
+				next();
+			} else {
+				res.end('token not correct');
+			}
+	  });
+	} else {
+		res.end('no Token');
+	}
+}
 
 
 exports.api = (app) => {
 
 
-app.post('/getArticle',function(req,res){
+app.get('/getArticle',function(req,res){
 	Post.find({}).sort({lastModify : -1})
   	.then(data => {
 	  	 res.end(JSON.stringify(data))
 		})
 })
 
+
 app.get('/getUser',function(req,res){
-	User.find({account:req.session.user},{_id:0,account:1,email:1,name:1,avatar:1,RegistedDate:1,mobile:1,address:1,hobby:1,birthday:1})
-		.then(data => {
-			res.end(JSON.stringify(data[0]));
-		})
-		.catch(err => console.log(err));
+	if (req.session.user) {
+		User.find({account:req.session.user},{_id:0,account:1,email:1,name:1,avatar:1,RegistedDate:1,mobile:1,address:1,hobby:1,birthday:1})
+			.then(data => {
+				res.end(JSON.stringify(data[0]));
+			})
+			.catch(err => console.log(err));
+	}
 })
 app.get('/checkLogin',(req,res) => {
 	if(typeof req.session.user === 'string') {
 		res.json({ login: true });
 	}
 })
-app.get('/userArticles/:user',(req,res) => {
+
+//查詢使用者發佈的所有文章
+app.get('/userArticles/:user',authToken,(req,res) => {
 	Post.find({posterAccount: req.params.user})
-	.sort({PostDate : -1})
 	.then(data => {
-  	 res.end(JSON.stringify(data))
+  	 res.json(JSON.stringify(data))
 	})
 })
 
-
-app.post('*',function(req,res,next){
-	if(req.connection.remoteAddress !== '127.0.0.1'){
-		res.end('not local')
-	}
-	next();
+//以文章id查詢文章內容
+app.get('/articles/:id',authToken,(req,res) => {
+	Post.findOne({_id: req.params.id})
+	.then(data => {
+  	 res.end(JSON.stringify(data))
+	})
 })
 
 app.post('/login',function(req,res){
@@ -51,6 +74,16 @@ app.post('/login',function(req,res){
 			if (data[0].password === req.body.password) {
 			  res.cookie('ifUser',true, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
 				req.session.user = req.body.account;//將會在cookie中存入token之後token回到server取值
+				//jwt token
+				let jwtpayload = data[0];
+				jwtpayload.password = null;//移除密碼欄位，之後重要資訊時要求輸入密碼
+				let token = jwt.sign({
+					exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
+					data: {
+					user: jwtpayload
+					}
+				}, jwtSecret);
+				res.cookie('t', token, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: true });
 			  res.end('success login');
 			}else{
 				res.end('帳號或密碼錯誤');
@@ -60,7 +93,9 @@ app.post('/login',function(req,res){
 
 app.post('/logout',function(req,res){
 	res.cookie('ifUser',true, { expires: new Date() });
-	req.session.user = null
+	res.cookie('t',true, { expires: new Date() });
+	req.session.user = null;
+	req.session.cookie.expires = new Date(Date.now());
 	res.end();
 })
 
@@ -105,33 +140,30 @@ app.post('/signup',function(req,res){
 		.catch(err => console.log(err));
 })
 
-app.post('/postArticle',function(req,res) {
-	if(typeof req.session.user === 'string') {
-		let post = new Post({
-			posterAccount: req.body.account,
-			posterName: req.body.name,
-			title: req.body.title,
-		  content: req.body.content,
-			avatar: req.body.avatar,
-		  PostDate: Date.now() + 1000 * 60 * 60 * 8, //因此預設為UTC+0 要改為UTC+8
-			lastModify: Date.now() + 1000 * 60 * 60 * 8,
-			comments: '',
-			tag: req.body.tag,
-		});
-		post.save()
-		.then(() => {
-			res.end('發表文章成功');
-		})
-		.catch(err => {
-			res.end('發表文章錯誤');
-		});
-	}
-})
+app.post('/postArticle', authToken, function(req, res) {
+			if(typeof req.session.user === 'string') {
+				let post = new Post({
+					posterAccount: req.body.account,
+					author: req.body.name,
+					title: req.body.title,
+					content: req.body.content,
+					avatar: req.body.avatar,
+					PostDate: Date.now() + 1000 * 60 * 60 * 8, //因此預設為UTC+0 要改為UTC+8
+					lastModify: Date.now() + 1000 * 60 * 60 * 8,
+					//comments: ,  因為comment一開始為空的Array，所以可不寫
+					tag: req.body.tag,
+				});
+				post.save()
+				.then(() => {
+					res.end('發表文章成功');
+				})
+				.catch(err => {
+					res.end('發表文章錯誤');
+				});
+			}
+});
 
-app.put('/UpdateUserInfo',(req,res) => {
-	// console.log(req.body.avatar)
-	// res.json({ok:'ok'})
-	//
+app.put('/UpdateUserInfo',authToken,(req,res) => {
 	User.update({account: req.body.account},{
 		avatar: req.body.avatar,
 		name: req.body.name,
@@ -148,7 +180,7 @@ app.put('/UpdateUserInfo',(req,res) => {
 	});
 })
 
-app.put('/updateArticle',(req,res) => {
+app.put('/updateArticle',authToken,(req,res) => {
 	Post.update({ _id: req.body.id },{ $set : {
 		"content" : req.body.content,
 		"lastModify" : Date.now() + 1000 * 60 * 60 * 8
@@ -157,8 +189,7 @@ app.put('/updateArticle',(req,res) => {
 			 res.end(JSON.stringify(data))
 		})
 })
-app.put('/leavemsg',(req,res) => {
-	console.log(req.body)
+app.put('/leavemsg',authToken,(req,res) => {
 	Post.findOne({ _id: req.body.id })
 	.then(data => {
 		let newComments = data.comments;
@@ -166,9 +197,9 @@ app.put('/leavemsg',(req,res) => {
 			title : req.body.title,
 			content : req.body.content,
 			authorAccount : req.body.authorAccount,
+			userAvatar: req.body.userAvatar,
 			date: Date.now() + 1000 * 60 * 60 * 8
 		})
-	console.log(newComments)
 	Post.update({ _id: req.body.id },{ $set : {
 		comments: newComments,
 		lastModify : Date.now() + 1000 * 60 * 60 * 8
@@ -184,3 +215,15 @@ app.put('/leavemsg',(req,res) => {
 
 
 };
+
+
+
+// app.post('/',function(req,res) {
+// 	jwt.verify(req.cookies.t, jwtSecret, (err, decoded) => {
+// 		if(decoded){
+// 			// TODO 
+// 		} else {
+// 			console.log('no token');
+// 		}
+// 	}
+// }

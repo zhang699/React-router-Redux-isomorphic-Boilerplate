@@ -51,6 +51,7 @@ class PersonalInfo extends Component {
     console.log(this.state)
     axios.put('/UpdateUserInfo',{
       account: this.props.userInfo.account,
+      avatar: this.props.userInfo.avatar,
       name: this.state.name,
       mobile: this.state.mobile,
       address: this.state.address,

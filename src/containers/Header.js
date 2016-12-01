@@ -7,8 +7,15 @@ import { browserHistory } from 'react-router'
 import Menu from '../components/utils/Menu.js'
 import { getCookie } from '../client/javascript/cookie.js'
 import axios from 'axios';
+import Loading from '../components/utils/Loading/'
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false
+    }
+  }
   login = () => {
     browserHistory.push('/login')
   };
@@ -17,8 +24,10 @@ class Header extends Component {
   };
   logout = () => {
     const context = this;
+    this.setState({ loading: true });
     axios.post('/logout', {})
       .then(function (response) {
+        context.setState({ loading: false });
         context.props.logout();
         browserHistory.push('/login')
       })
@@ -34,7 +43,13 @@ class Header extends Component {
         getCookie('ifUser') === 'true'
         ?
         <div style={style.menu}>
-          <Menu logout={() => this.logout()} title={ this.props.userInfo.name || '' } />
+          {
+            this.state.loading
+            ?
+            <Loading style={{ marginTop: '0px' }} />
+            :
+            <Menu logout={() => this.logout()} title={ this.props.userInfo.name || '' } />
+          }
         </div>
         :
         <div>

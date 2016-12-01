@@ -18,6 +18,6 @@ export const editArticle = (payload) => {
       type: 'EDIT_ARTICLE',
       _id: payload.id,
       content: payload.content,
-			lastModify: Date.now() + 1000 * 60 * 60 * 8
+			lastModify: new Date().toISOString()
     })
   };

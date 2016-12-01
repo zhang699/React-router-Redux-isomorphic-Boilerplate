@@ -5,7 +5,6 @@ import axios from 'axios';
 import SimpleDialog from './utils/Dialogs/SimpleDialog.js';
 import { browserHistory } from 'react-router';
 import { connect } from 'react-redux'
-import wait from '../redux/actions/waiting.js'
 
 class Register extends Component {
   constructor(props) {
@@ -27,7 +26,7 @@ class Register extends Component {
   }
   checkAccount(e) {
     this.state.account = e.target.value;
-    if (e.target.value === ''){
+    if (e.target.value === '' || e.target.value.length > 12){
       this.setState({ accountCheck: false })
       return
     }
@@ -35,7 +34,7 @@ class Register extends Component {
   }
   checkPassword(e) {
     this.state.password = e.target.value;
-    if (e.target.value === ''){
+    if (e.target.value === '' || e.target.value.length < 6){
       this.setState({ passwordCheck: false })
       return
     }
@@ -78,7 +77,6 @@ class Register extends Component {
         this.setState({ dialogText: '您好，請填完所有欄位再點選' });
         return;
       };
-      this.props.pause();
     axios.post('/signup', {
         account: this.state.account,
         password: this.state.password,
@@ -103,7 +101,7 @@ class Register extends Component {
           onBlur = {(e) => this.checkAccount(e) }
           hintText="帳號"
           floatingLabelStyle={{color: 'gray'}}
-          errorText={ this.state.accountCheck ? '' : 'This field is required' }
+          errorText={ this.state.accountCheck ? '' : '欄位為空，或輸入超過12個字' }
           floatingLabelText="帳號"
         /><br />
         <TextField
@@ -111,7 +109,7 @@ class Register extends Component {
           hintText="密碼"
           type="password"
           floatingLabelStyle={{color: 'gray'}}
-          errorText={ this.state.passwordCheck ? '' : 'This field is required' }
+          errorText={ this.state.passwordCheck ? '' : '欄位為空，或輸入密碼不足6個字' }
           floatingLabelText="密碼"
         /><br />
         <TextField
@@ -119,21 +117,21 @@ class Register extends Component {
           hintText="確認密碼"
           type="password"
           floatingLabelStyle={{color: 'gray'}}
-          errorText={ this.state.password1Check ? '' : 'This field is required or Not match password' }
+          errorText={ this.state.password1Check ? '' : '欄位為空，或輸入密碼不相符' }
           floatingLabelText="確認密碼"
         /><br />
         <TextField
           onBlur = {(e) => this.checkEmail(e) }
           hintText="E-mail"
           floatingLabelStyle={{color: 'gray'}}
-          errorText={ this.state.emailCheck ? '' : 'This field is required or Wrong email format' }
+          errorText={ this.state.emailCheck ? '' : 'email格式不正確' }
           floatingLabelText="E-mail"
         /><br />
         <TextField
           onBlur = {(e) => this.checkNickName(e) }
           hintText="暱稱"
           floatingLabelStyle={{color: 'gray'}}
-          errorText={ this.state.checkNickName ? '' : 'This field is required' }
+          errorText={ this.state.checkNickName ? '' : '欄位不可為空白' }
           floatingLabelText="暱稱"
         /><br />
         <RaisedButton
@@ -156,11 +154,8 @@ const style = {
 
 function  mapStateToProp(state){
 	return {
-    wait: state.waiting
   }
 }
 
 export default connect(mapStateToProp,{
-  pause: wait.pause,
-  resume: wait.resume
 })(Register)

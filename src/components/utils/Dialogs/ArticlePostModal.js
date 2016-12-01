@@ -47,15 +47,11 @@ export default class ArticleModal extends React.Component {
     super();
     this.state = {
       title: '',
-      content: '',
       tag: '',
     }
   }
   titleInput = (e) => {
     this.setState({ title: e.target.value });
-  }
-  contentInput = (e) => {
-    this.setState({ content: e.target.value });
   }
   handleClose = () => {
     this.props.context.setState({articlePostModal: false});
@@ -64,21 +60,24 @@ export default class ArticleModal extends React.Component {
   handleConfirm = () => {
     const context = this.props.context;
     this.props.context.setState({articlePostModal: false});
+    this.props.context.setState({loading: true});
     axios.post('/postArticle', {
         name: this.props.user.name,
         account: this.props.user.account,
-        content: this.state.content,
+        content: this.refs.div1.innerHTML,
         title: this.state.title,
         avatar: this.props.user.avatar,
         tag: this.state.tag
       })
     .then((response) => {
+      this.props.context.setState({loading: false});
       context.setState({ dialog:true })
       context.setState({ dialogText:response.data })
       socket.emit('postArticle',{data:'test'});
     })
     .catch((e) => {
-      console.log(e)
+      alert(e);
+      this.props.context.setState({loading: false});
     })
   }
   componentDidMount () {
@@ -154,7 +153,6 @@ export default class ArticleModal extends React.Component {
             ref="div1"
             contentEditable="true"
             placeholder="請輸入文章內容"
-            onChange={(e) => this.contentInput(e)}
             style={style.textarea} >
           </div>
         </div>

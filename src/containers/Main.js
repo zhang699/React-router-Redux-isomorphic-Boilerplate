@@ -62,6 +62,7 @@ class Main extends Component {
   render() {
     return (
       <div style={style.container}>
+        { this.state.loading ? <Loading /> : '' }
         { this.state.dialog ? <SimpleDialog content={this.state.dialogText} context={this} /> : '' }
         { this.state.articlePostModal ? <ArticlePostModal user={this.props.user} context={this} /> : '' }
         { this.props.user.login
@@ -85,7 +86,7 @@ class Main extends Component {
             ''
           }
           <div style={{width:'100%', height: '200px'}}>
-            <Loading />
+
           </div>
       </div>
     )

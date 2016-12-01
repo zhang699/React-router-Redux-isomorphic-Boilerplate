@@ -1,8 +1,8 @@
 import React from 'react';
 import './index.css';
 
-const Loading = () => (
-  <div className="spinner">
+const Loading = (props) => (
+  <div className="spinner" style={props.style}>
     <div className="rect1"></div>
     <div className="rect2"></div>
     <div className="rect3"></div>

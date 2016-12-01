@@ -61,8 +61,15 @@ export default class ArticleContentModal extends React.Component {
       dialog: false,
       title: '',
       content: '',
-      leaveMsgModal: false
+      leaveMsgModal: false,
+      comments: []
     }
+  }
+  componentWillMount() {
+    axios.get('articles/' + this.props.activeArticle._id)
+    .then((response) => {
+      this.setState({ comments: response.data.comments });
+    })
   }
   handleClose = () => {
     this.props.context.setState({articleContentModal: false});
@@ -128,9 +135,9 @@ export default class ArticleContentModal extends React.Component {
         </div>
         <div style={style.levmsgLine}></div>
         <div style={style.levmsgTitle}>留言內容</div>
-        <ListMsg />
+        <ListMsg comments={this.state.comments} />
         { this.state.leaveMsgModal ? <LeaveMsgModal context={this} /> : '' }
-        { this.state.dialog ? <SimpleDialog context={this} />  : ''}
+        { this.state.dialog ? <SimpleDialog context={this} />  : ''} {/* 未登入*/}
         </Dialog>
       </div>
     );

@@ -72,26 +72,28 @@ class MyArticle extends Component {
       }
     }
   }
-  contentInput = (e) => {
-    this.setState({ content: e.target.value });
-    console.log(e)
-  }
+  // contentInput = (e) => {
+  //   this.setState({ content: e.target.value });
+  //   console.log(e)
+  // }
   handleConfirm = () => {
     const contentRef = this.refs.content1.refs.div1.innerHTML;
     const articleID = this.state.activeArticle._id;
     this.setState({ articleContentModal: false })
+    this.setState({ loading: true })
     axios.put('/updateArticle',{
       content: contentRef,
       id: articleID
     })
     .then((response) => {
+      //更新reducer
       this.props.editArticle({
         content: contentRef,
         id: articleID
       });
-      //更新畫面
       axios.get('/userArticles/' + this.props.userInfo.account)
       .then((response) => {
+        this.setState({ loading: false })
         this.setState({ articles: response.data });
       })
     })
@@ -124,7 +126,7 @@ class MyArticle extends Component {
             <div  key={idx}>
             <ListItem
               rightIconButton={rightIconMenu(this,article)}
-              primaryText={'作者：' + article.posterName}
+              primaryText={'作者：' + article.author}
               secondaryText={
                 <p>
                   <span style={{color: darkBlack}}>標題：{article.title}</span><br />
@@ -149,5 +151,5 @@ const mapStateToProp = (state) => ({
 })
 
 export default connect(mapStateToProp,{
-  editArticle: editArticle
+  editArticle
 })(MyArticle)

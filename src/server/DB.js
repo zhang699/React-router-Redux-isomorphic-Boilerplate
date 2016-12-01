@@ -26,7 +26,7 @@ exports.User = mongoose.model('users', new mongoose.Schema({
 //發表文章
 exports.Post = mongoose.model('articles', new mongoose.Schema({
 	posterAccount: String,
-	posterName: String,
+	author: String,
 	title: String,
   content: String,
 	avatar: String,

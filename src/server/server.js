@@ -10,8 +10,8 @@ var webpackHotMiddleware = require('webpack-hot-middleware');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
 import { api } from './api.js';
-import { post, get } from 'prore';
-
+import config1 from '../config.js';
+import axios from 'axios';
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -20,13 +20,13 @@ app.use(cookieParser());
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 app.use(session({
-	saveUninitialized: true, // don't create session until something stored
+	saveUninitialized: false, // don't create session until something stored
   resave: false, //don't save session if unmodified
   secret: 'yicheng',
   key: 'auth_token',//cookie name
   cookie: {maxAge: 1000 * 60 * 60 * 24 * 1},//1 days
   store: new MongoStore({
-		url:'mongodb://forclass1:test123@ds013898.mlab.com:13898/forclass'
+		url: config1.dbURL
   })
 }));
 
@@ -35,15 +35,14 @@ io.on('connection', function(socket){
 	console.log('a user connected');
 	//發表文章
 	socket.on('postArticle', function(){
-		post({
-			host: 'localhost',
-			port: '3001',
-			path: '/getArticle'
-		},'hi')
-		.then(function(data){
-			socket.broadcast.emit('addArticle',JSON.parse(data));//broadcast傳給所有人除了自己
-			socket.emit('addArticle',JSON.parse(data));//加上傳給自己的socket
-		});
+		axios.get(`${config1.origin}/getArticle`)
+			.then(function(response){
+				socket.broadcast.emit('addArticle', response.data);//broadcast傳給所有人除了自己
+				socket.emit('addArticle', response.data);//加上傳給自己的socket
+			}).
+			catch(err => {
+				console.log(err);
+			})
 	});
 });
 
@@ -67,11 +66,9 @@ app.use(webpackDevMiddleware(compiler, {noInfo:true,publicPath: config.output.pu
 app.use(webpackHotMiddleware(compiler));
 
 
-
-app.get('*', (req, res) => {
+app.get('*',(req, res) => {
 
 	let initialState = {
-			waiting: false,
 			todos:[{
 				id:0,
 				completed: false,
@@ -83,45 +80,38 @@ app.get('*', (req, res) => {
 			article: []
 	}
 
-///如在server fetch 時用get 會因為在app.get('*'）內，造成socket hang up
-///axops
-	 post({
-		 host: 'localhost',
-		 port: '3001',
-		 path: '/getArticle'
-	 },'hi')
-	 .then(function(data){
-		 initialState.article = JSON.parse(data);
-
-	const store = configureStore(initialState);
-	const muiTheme = getMuiTheme({
-	  userAgent: req.headers['user-agent'],
-	});
-  match({routes, location: req.url}, (error, redirectLocation, renderProps) => {
-    if (error) {
-      res.status(500).send(error.message);
-    } else if (redirectLocation) {
-      res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-    } else if (renderProps) {
-      const content = renderToString(
-				<Provider store={store}>
-				  <MuiThemeProvider muiTheme={muiTheme}>
-					  <RouterContext {...renderProps} />
-				  </MuiThemeProvider>
-				</Provider>
-			);
-      let state = store.getState();
-      let page = renderFullPage(content, state);
-      return res.status(200).send(page);
-    } else {
-      res.status(404).send('Not Found');
-    }
-  });
-});
-
-process.on('uncaughtException', function (err) {
-    res.send(500);
-});
+	axios.get(`${config1.origin}/getArticle`)//axios在iso server須加上域名
+		.then(response => {
+			initialState.article = response.data;//axios預設json parse
+			const store = configureStore(initialState);
+			const muiTheme = getMuiTheme({
+				userAgent: req.headers['user-agent'],
+			});
+			match({routes, location: req.url}, (error, redirectLocation, renderProps) => {
+				if (error) {
+					res.status(500).send(error.message);
+				} else if (redirectLocation) {
+					res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+				} else if (renderProps) {
+					const content = renderToString(
+						<Provider store={store}>
+							<MuiThemeProvider muiTheme={muiTheme}>
+								<RouterContext {...renderProps} />
+							</MuiThemeProvider>
+						</Provider>
+					);
+					let state = store.getState();
+					let page = renderFullPage(content, state);
+					return res.status(200).send(page);
+				} else {
+					res.status(404).send('Not Found');
+				}
+			});
+		})
+		.catch(err => {
+			console.log(err);
+			res.end(err);
+		});
 })
 
 const renderFullPage = (html, preloadedState) => (`

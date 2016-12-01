@@ -50,15 +50,16 @@ export default class LeaveMsgModal extends React.Component {
     super();
     this.state = {
       title: '',
-      content: '',
     }
   }
   handleLeaveMsg = () => {
+    this.props.context.setState({ leaveMsgModal: false });
     axios.put('/leavemsg',{
       id: this.props.context.props.activeArticle._id,
       title: this.state.title,
-      content: this.state.content,
-      authorAccount: this.props.context.props.context.props.user.account
+      content: this.refs.div1.innerHTML, //因contentEditable div 無法用onChange抓e.target.value
+      authorAccount: this.props.context.props.context.props.user.account,
+      userAvatar: this.props.context.props.context.props.user.avatar
     })
     .then((response) => {
       console.log(response.data);
@@ -69,10 +70,6 @@ export default class LeaveMsgModal extends React.Component {
   };
   titleInput = (e) => {
     this.setState({ title: e.target.value })
-  }
-  contentInput = (e) => {
-    console.log(e.target.value)
-    this.setState({ content: e.target.value })
   }
   render() {
     const action1 = [

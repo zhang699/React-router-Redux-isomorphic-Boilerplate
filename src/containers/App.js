@@ -4,18 +4,13 @@ import { connect } from 'react-redux'
 import actions from '../redux/actions/userInfo.js'
 import Header from './Header.js'
 import axios from 'axios';
-import SimpleDialog from '../components/utils/Dialogs/SimpleDialog.js'
-import wait from '../redux/actions/waiting.js'
+import SimpleDialog from '../components/utils/Dialogs/SimpleDialog.js';
 
 import { browserHistory } from 'react-router';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      dialogText: '等待中',
-      dialog: false
-    }
   }
 
   componentDidMount() {
@@ -46,14 +41,6 @@ class App extends Component {
   render() {
     return (
       <div>
-        {
-          this.props.wait
-          ?
-          <SimpleDialog close={() => this.props.resume()} context={this} />
-          :
-          ''
-        }
-
         <Header />
         <div style={style.content}>
         {this.props.children}
@@ -71,13 +58,10 @@ const style = {
 
 function  mapStateToProp(state){
 	return {
-    wait: state.waiting,
     userInfo: state.userInfo
   }
 }
 
 export default connect(mapStateToProp,{
   userInfoAction:actions.userInfo,
-  pause: wait.pause,
-  resume: wait.resume
 })(App)
