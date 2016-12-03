@@ -48,7 +48,6 @@ class PersonalInfo extends Component {
     this.setState({ [type]: true })
   }
   sendRequest() {
-    console.log(this.state)
     axios.put('/UpdateUserInfo',{
       account: this.props.userInfo.account,
       avatar: this.props.userInfo.avatar,
@@ -70,8 +69,8 @@ class PersonalInfo extends Component {
       if (findDOMNode(this.refs.fileInput).files && findDOMNode(this.refs.fileInput).files[0]) {
         var FR= new FileReader();
         FR.onload = function(e) {
-          let base64 = e.target.result.replace(/^data:image\/(png|jpg);base64,/, "");
-
+          let base64 = e.target.result.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+          console.log(base64)
           var xhttp = new XMLHttpRequest();
           xhttp.open('POST','https://api.imgur.com/3/image',true)
           xhttp.setRequestHeader("Content-type", "application/json");
@@ -92,6 +91,7 @@ class PersonalInfo extends Component {
               })
               .then((res) => {
                 console.log(res.data)
+                location.reload();
               })
             }
           };

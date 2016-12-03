@@ -53,7 +53,7 @@ app.get('/checkLogin',(req,res) => {
 app.get('/userArticles/:user',authToken,(req,res) => {
 	Post.find({posterAccount: req.params.user})
 	.then(data => {
-  	 res.json(JSON.stringify(data))
+  	 res.end(JSON.stringify(data))
 	})
 })
 
