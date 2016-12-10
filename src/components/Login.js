@@ -48,11 +48,8 @@ class Login extends Component {
         context.setState({ loading: false })
         context.setState({ dialogText:response.data })
         context.setState({ dialog: true });
-        axios.get('/getUser',{})
+          axios.post('/getUser',{})///這裡如發出get並且在server重啟第一次的情況，getuser的get會延遲，但開devtool disable cache又不會，改成post則沒這問題
           .then(function (response) {
-            if(typeof response.data === 'string'){
-              return //如session內無user會回傳空值 type為String
-            }
             context.props.userInfoAction(response.data);
             browserHistory.push('/main')
           })

@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import TodoList from './TodoList.js'
 import { connect } from 'react-redux'
 import actions from '../redux/actions/userInfo.js'
 import Header from './Header.js'
 import axios from 'axios';
 import SimpleDialog from '../components/utils/Dialogs/SimpleDialog.js';
+import config from '../config.js';
 
 import { browserHistory } from 'react-router';
 
@@ -13,14 +13,14 @@ class App extends Component {
     super(props);
   }
 
-  componentDidMount() {
+  componentWillMount() {
 
     const context = this;
-    axios.get('/getUser',{})
+    axios.post(config.origin + '/getUser',{})
       .then(function (response) {
-        if(typeof response.data === 'string'){
-          return //如session內無user會回傳空值 type為String
-        }
+        // if(typeof response.data === 'string'){
+        //   return //如session內無user會回傳空值 type為String
+        // }
         context.props.userInfoAction(response.data);
       })
       .catch(function (error) {

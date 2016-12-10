@@ -33,8 +33,9 @@ app.get('/getArticle',function(req,res){
 		})
 })
 
-
-app.get('/getUser',function(req,res){
+///這裡如發出get並且在server重啟第一次的情況，在login.js的getuser的get會延遲，但開devtool disable cache又不會，改成post則沒這問題
+app.post('/getUser',function(req,res){
+	console.log(req.session.user)
 	if (req.session.user) {
 		User.find({account:req.session.user},{_id:0,account:1,email:1,name:1,avatar:1,RegistedDate:1,mobile:1,address:1,hobby:1,birthday:1})
 			.then(data => {
@@ -84,7 +85,7 @@ app.post('/login',function(req,res){
 					}
 				}, jwtSecret);
 				res.cookie('t', token, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: true });
-			  res.end('success login');
+			  res.end('登入成功');
 			}else{
 				res.end('帳號或密碼錯誤');
 			}

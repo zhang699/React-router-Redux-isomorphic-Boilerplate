@@ -62,7 +62,10 @@ export default class LeaveMsgModal extends React.Component {
       userAvatar: this.props.context.props.context.props.user.avatar
     })
     .then((response) => {
-      console.log(response.data);
+      sweetAlert('留言成功');
+    })
+    .catch(err => {
+      sweetAlert('留言失敗，請重試');
     })
   }
   handleClose = () => {

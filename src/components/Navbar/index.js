@@ -20,7 +20,7 @@ export default class Navbar extends React.Component {
   }
 
     toa = () => {
-      browserHistory.push('/a')
+      browserHistory.push('/chatroom')
       this.setState({open: false});
     }
 

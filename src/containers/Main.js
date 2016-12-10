@@ -32,6 +32,7 @@ class Main extends Component {
   }
   componentDidMount() {
     const context = this;
+    socket.emit('mainPage');
     socket.on('addArticle',function(msg){//新增文章後的
       const payload = msg[0];
       context.props.addArticleAction({

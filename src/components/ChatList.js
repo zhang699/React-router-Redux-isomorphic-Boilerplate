@@ -27,20 +27,20 @@ const iconButtonElement = (
   </IconButton>
 );
 
-const ListMsg = (props) => (
+const ChatList = (props) => (
   <div>
-  {props.comments.map(i => (
+  {props.msg.map(i => (
     <List>
       <ListItem
         leftAvatar = {
-          <div>
-            <Avatar src={i.userAvatar} />
-            <div style={style.author}>{i.authorAccount}</div>
+          <div >
+            <Avatar src={i.avatar + `?d=identicon`} />
+            <div style={style.author}>{i.name}</div>
           </div>
         }>
         <div>
-          <div style={{color: 'gray'}}>{i.title}</div>
-          <div style={{marginTop: '10px'}}>{i.content}</div>
+          <div >{i.content}</div>
+          <div style={{position: 'relative', top: '15px'}}>{i.date}</div>
         </div>
       </ListItem>
 
@@ -51,4 +51,4 @@ const ListMsg = (props) => (
   </div>
 );
 
-export default ListMsg;
+export default ChatList;

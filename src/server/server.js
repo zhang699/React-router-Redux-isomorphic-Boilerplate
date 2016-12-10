@@ -8,8 +8,7 @@ var webpack = require('webpack');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser')
-import { api } from './api.js';
+var cookieParser = require('cookie-parser');
 import config1 from '../config.js';
 import axios from 'axios';
 app.use(express.static(path.join(__dirname, '../client')));
@@ -21,7 +20,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 app.use(session({
 	saveUninitialized: false, // don't create session until something stored
-  resave: false, //don't save session if unmodified
+  resave: true, //don't save session if unmodified
   secret: 'yicheng',
   key: 'auth_token',//cookie name
   cookie: {maxAge: 1000 * 60 * 60 * 24 * 1},//1 days
@@ -30,23 +29,18 @@ app.use(session({
   })
 }));
 
-//SOCKET.IO
-io.on('connection', function(socket){
-	console.log('a user connected');
-	//發表文章
-	socket.on('postArticle', function(){
-		axios.get(`${config1.origin}/getArticle`)
-			.then(function(response){
-				socket.broadcast.emit('addArticle', response.data);//broadcast傳給所有人除了自己
-				socket.emit('addArticle', response.data);//加上傳給自己的socket
-			}).
-			catch(err => {
-				console.log(err);
-			})
-	});
-});
 
-api(app);//引入api.js
+//Redis
+import Redis from './redis';
+Redis();
+
+//SOCKET.IO
+import { socketio } from './io.js';
+socketio(io, axios, config1);
+
+//引入API
+import { api } from './api.js';
+api(app);
 
 
 import React from 'react';
@@ -120,8 +114,10 @@ const renderFullPage = (html, preloadedState) => (`
 <head>
   <meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
-  <title>React Todo List</title>
+  <title>那些年困惑的年輕人</title>
 	<link rel="stylesheet" type="text/css" href="/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 	  var socket = io();
