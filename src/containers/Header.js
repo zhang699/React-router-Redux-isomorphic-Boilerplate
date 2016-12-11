@@ -29,6 +29,10 @@ class Header extends Component {
         console.log(error);
       }) 
     })
+
+    socket.on('toMainPage', () => {
+      browserHistory.push('/main')
+    })
   }
   login = () => {
     browserHistory.push('/login')
@@ -39,6 +43,7 @@ class Header extends Component {
   logout = () => {
     const context = this;
     this.setState({ loading: true });
+
     //登出時讓所有裝置登出
     socket.emit('logout',this.props.userInfo.account);
     //包含自己登出

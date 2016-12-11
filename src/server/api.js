@@ -81,10 +81,13 @@ app.post('/login',function(req,res){
 			  res.cookie('ifUser',true, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
 
 				//存入加密帳號為cookie之後給Redis使用者連線判斷使用
-				let cipher = crypto.createCipher('aes-256-cbc','testkey');
-				let crypted = cipher.update(req.body.account,'utf8','binary');
-				crypted += cipher.final('binary');
-				res.cookie('a1',crypted, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
+				// if(!req.session.user) {
+				// 	let cipher = crypto.createCipher('aes-256-cbc','testkey');
+				// 	let crypted = cipher.update(req.body.account,'utf8','binary');
+				// 	crypted += cipher.final('binary');
+					res.cookie('a1',req.body.account, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
+			//	}
+
 
 				//將會在cookie中存入token之後token回到server取值
 				req.session.user = req.body.account;

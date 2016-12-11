@@ -22,12 +22,15 @@ io.on('connection', function(socket){
 
   //使用者關閉瀏覽器
   socket.on('close', (res) => {//寫了beforeunload在client
-    
-    ///解密來自client加密的使用者帳號
-    let decipher = crypto.createDecipher('aes-256-cbc','testkey');
-    let dec = decipher.update(res,'binary','utf8');
-    dec += decipher.final('utf8');
-    console.log('解密的文本：' + dec);
+
+    ///解密來自client加密的使用者帳號，目前加密會產生錯誤所以先取消
+    // let decipher = crypto.createDecipher('aes-256-cbc','testkey');
+    // let dec = decipher.update(res,'binary','utf8');
+    // dec += decipher.final('utf8');//dec為解密後的cookie，為帳號
+    const dec = res;
+    //更新頁面，避免同一個瀏覽器不同tab離開後畫面沒更新
+    socket.broadcast.to(dec).emit('toMainPage');
+
     //將Redis 中紀錄的線上的使用者移除
     Redisclient.get("chatRoomUsersList", (err, reply) => {
       if (err) console.log(err);
@@ -35,6 +38,7 @@ io.on('connection', function(socket){
       delete payload[dec];
       Redisclient.set("chatRoomUsersList",JSON.stringify(payload), (err, reply) => {
         socket.emit('chatRoomUsers',{user: payload});
+        socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload});
         console.log(payload)
       });
     })
@@ -67,6 +71,8 @@ io.on('connection', function(socket){
 
 	//房間
 	socket.on('mainPage',(res) => {
+    //更新頁面，避免同一個瀏覽器不同tab回到mainPage後畫面沒更新
+    socket.broadcast.to(res.account).emit('toMainPage');
 		socket.join('mainPage',() => {
 		  console.log('join main okok')
 			socket.leave('chatPage', () => {
@@ -79,6 +85,7 @@ io.on('connection', function(socket){
         delete payload[name];
         Redisclient.set("chatRoomUsersList",JSON.stringify(payload), (err, reply) => {
           socket.emit('chatRoomUsers',{user: payload});
+          socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload});
           console.log(payload)
         });
 			})
@@ -94,9 +101,10 @@ io.on('connection', function(socket){
         if (err) console.log(err);
         const payload = JSON.parse(reply);
         const name = res.account;
-        const new1 = Object.assign(payload, {[name]: {avatar: res.avatar }});
+        const new1 = Object.assign(payload, {[name]: {avatar: res.avatar, name: res.name }});
         Redisclient.set("chatRoomUsersList",JSON.stringify(new1), (err, reply) => {
           socket.emit('chatRoomUsers',{user: new1});
+          socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: new1});
           console.log(new1)
         });
       });
@@ -126,6 +134,7 @@ io.on('connection', function(socket){
       delete payload[name];
       Redisclient.set("chatRoomUsersList",JSON.stringify(payload), (err, reply) => {
         socket.emit('chatRoomUsers',{user: payload});
+        socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload});
         console.log(payload)
       });
     })
