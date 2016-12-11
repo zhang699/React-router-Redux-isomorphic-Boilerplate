@@ -6,6 +6,8 @@ import SendIcon from 'material-ui/svg-icons/content/send';
 import { findDOMNode } from 'react-dom';
 import ChatList from '../components/ChatList.js';
 import axios from 'axios';
+import config from '../config.js';
+import { browserHistory } from 'react-router'
 
 const style = {
   container: {
@@ -45,19 +47,46 @@ class Chatroom extends Component {
     }
   }
   componentWillMount() {
-    
+    if(typeof window !== 'undefined') {
+      window.onbeforeunload = myUnloadEvent;
+        function myUnloadEvent() {
+          socket.emit('close',document.cookie.replace(/(?:(?:^|.*;\s*)a1\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
+      }
+    }
+    const context = this;
+    axios.post(config.origin + '/getUser',{})
+      .then(function (response) {
+        if (response.data.result === -1) {
+          if (browserHistory) { //for server side error
+            browserHistory.push('/main');
+          }
+          sweetAlert('請先登入，才能進入聊天室');
+          return
+        };
+        socket.emit('chatPage',{ //使用者進入聊天室
+          avatar: response.data.avatar,
+          name: response.data.name,
+          account: response.data.account
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }  
   componentDidMount () {
-    socket.emit('chatPage',{ //使用者進入聊天室
-      avatar: this.props.userInfo.avatar,
-      name: this.props.userInfo.name,
-    });
+    const divRef = findDOMNode(this.refs.contentDiv);
+    const context = this ;
+
     socket.on('chat',(res) => { //使用者發表訊息
-      console.log(res)
       let newList = this.state.msg;
       newList.push(res.data.content);
-      this.setState({ msg: newList });
-      /*保持捲軸在最下方新消息 */findDOMNode(this.refs.contentDiv).scrollTop = findDOMNode(this.refs.contentDiv).scrollHeight;
+      context.setState({ msg: newList });
+      /*保持捲軸在最下方新消息 */findDOMNode(divRef).scrollTop = findDOMNode(divRef).scrollHeight;
+    })
+
+    socket.on('chatRoomUsers', (res) => {
+      console.log(res)
+      //TODO 顯示當前使用者在畫面列表
     })
   }
   send() {

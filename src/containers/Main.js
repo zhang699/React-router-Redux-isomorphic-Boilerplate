@@ -9,6 +9,8 @@ import ArticleContentModal from '../components/utils/Dialogs/ArticleContentModal
 import { addArticle } from '../redux/actions/article.js';
 import ArticleBlock from '../components/utils/ArticleBlock/';
 import Loading from '../components/utils/Loading/';
+import axios from 'axios';
+import config from '../config';
 
 const style = {
   container: {
@@ -32,7 +34,16 @@ class Main extends Component {
   }
   componentDidMount() {
     const context = this;
-    socket.emit('mainPage');
+      axios.post(config.origin + '/getUser',{})
+      .then(function (response) {
+        socket.emit('mainPage',{ //使用者進入主頁
+          name: response.data.name,
+          account: response.data.account
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     socket.on('addArticle',function(msg){//新增文章後的
       const payload = msg[0];
       context.props.addArticleAction({

@@ -38,28 +38,42 @@ class Login extends Component {
     this.setState({ passwordCheck: true })
   }
   sendRequest() {
+
     this.setState({ loading: true });
     const context = this;//因.then會找不到this
     axios.post('/login', {
-        account: this.state.account,
-        password: this.state.password
-      })
-      .then(function (response) {
-        context.setState({ loading: false })
-        context.setState({ dialogText:response.data })
+      account: this.state.account,
+      password: this.state.password
+    })
+    .then(function (response) {
+      if(response.data.result === -1){
         context.setState({ dialog: true });
-          axios.post('/getUser',{})///這裡如發出get並且在server重啟第一次的情況，getuser的get會延遲，但開devtool disable cache又不會，改成post則沒這問題
-          .then(function (response) {
+        context.setState({ dialogText:'帳號或密碼錯誤' })
+        return //未登入
+      }
+        axios.post('/getUser',{})///這裡如發出get並且在server重啟第一次的情況，getuser的get會延遲，但開devtool disable cache又不會，改成post則沒這問題
+        .then(function (response) {
+          context.setState({ loading: false })
+          if (response.data.result !== -1) {
+            //login時先把其他登入的裝置登出
+            socket.emit('logout',context.state.account);
+
+            socket.emit('login',response.data);
             context.props.userInfoAction(response.data);
-            browserHistory.push('/main')
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+            browserHistory.push('/main');
+          } else {
+            context.setState({ dialogText:'帳號或密碼錯誤' })
+            context.setState({ dialog: true });
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
   }
   render() {
     return (

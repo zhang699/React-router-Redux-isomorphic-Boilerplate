@@ -11,6 +11,9 @@ import { browserHistory } from 'react-router';
 class App extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      user: '2343333'
+    }
   }
 
   componentWillMount() {
@@ -18,9 +21,10 @@ class App extends Component {
     const context = this;
     axios.post(config.origin + '/getUser',{})
       .then(function (response) {
-        // if(typeof response.data === 'string'){
-        //   return //如session內無user會回傳空值 type為String
-        // }
+        if(response.data.result === -1){
+          return //未登入
+        }
+        socket.emit('login',response.data)
         context.props.userInfoAction(response.data);
       })
       .catch(function (error) {
@@ -37,7 +41,6 @@ class App extends Component {
     //  }
     // });
   }
-
   render() {
     return (
       <div>

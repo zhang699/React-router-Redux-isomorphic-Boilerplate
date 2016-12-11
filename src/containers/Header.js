@@ -16,6 +16,20 @@ class Header extends Component {
       loading: false
     }
   }
+  componentDidMount () {
+    const context = this;
+    socket.on('logout',() => {
+      axios.post('/logout', {})
+      .then(function (response) {
+        context.setState({ loading: false });
+        context.props.logout();
+        browserHistory.push('/login')
+      })
+      .catch(function (error) {
+        console.log(error);
+      }) 
+    })
+  }
   login = () => {
     browserHistory.push('/login')
   };
@@ -25,15 +39,18 @@ class Header extends Component {
   logout = () => {
     const context = this;
     this.setState({ loading: true });
+    //登出時讓所有裝置登出
+    socket.emit('logout',this.props.userInfo.account);
+    //包含自己登出
     axios.post('/logout', {})
-      .then(function (response) {
-        context.setState({ loading: false });
-        context.props.logout();
-        browserHistory.push('/login')
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
+    .then(function (response) {
+      context.setState({ loading: false });
+      context.props.logout();
+      browserHistory.push('/login')
+    })
+    .catch(function (error) {
+      console.log(error);
+    }) 
   }
   render() {
     return (

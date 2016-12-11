@@ -35,13 +35,17 @@ app.get('/getArticle',function(req,res){
 
 ///這裡如發出get並且在server重啟第一次的情況，在login.js的getuser的get會延遲，但開devtool disable cache又不會，改成post則沒這問題
 app.post('/getUser',function(req,res){
-	console.log(req.session.user)
 	if (req.session.user) {
 		User.find({account:req.session.user},{_id:0,account:1,email:1,name:1,avatar:1,RegistedDate:1,mobile:1,address:1,hobby:1,birthday:1})
 			.then(data => {
 				res.end(JSON.stringify(data[0]));
 			})
 			.catch(err => console.log(err));
+	} else {
+		res.json({
+			result: -1,
+			message: '請先登入'
+		})
 	}
 })
 app.get('/checkLogin',(req,res) => {
@@ -73,8 +77,18 @@ app.post('/login',function(req,res){
 				res.end('帳號或密碼錯誤');
 			}
 			if (data[0].password === req.body.password) {
+				//頁面判斷使用
 			  res.cookie('ifUser',true, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
-				req.session.user = req.body.account;//將會在cookie中存入token之後token回到server取值
+
+				//存入加密帳號為cookie之後給Redis使用者連線判斷使用
+				let cipher = crypto.createCipher('aes-256-cbc','testkey');
+				let crypted = cipher.update(req.body.account,'utf8','binary');
+				crypted += cipher.final('binary');
+				res.cookie('a1',crypted, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
+
+				//將會在cookie中存入token之後token回到server取值
+				req.session.user = req.body.account;
+
 				//jwt token
 				let jwtpayload = data[0];
 				jwtpayload.password = null;//移除密碼欄位，之後重要資訊時要求輸入密碼
@@ -95,6 +109,7 @@ app.post('/login',function(req,res){
 app.post('/logout',function(req,res){
 	res.cookie('ifUser',true, { expires: new Date() });
 	res.cookie('t',true, { expires: new Date() });
+	res.cookie('a1',true, { expires: new Date() });
 	req.session.user = null;
 	req.session.cookie.expires = new Date(Date.now());
 	res.end();

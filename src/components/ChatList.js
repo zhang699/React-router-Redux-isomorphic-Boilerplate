@@ -29,8 +29,8 @@ const iconButtonElement = (
 
 const ChatList = (props) => (
   <div>
-  {props.msg.map(i => (
-    <List>
+  {props.msg.map((i, idx) => (
+    <List key={idx}>
       <ListItem
         leftAvatar = {
           <div >
