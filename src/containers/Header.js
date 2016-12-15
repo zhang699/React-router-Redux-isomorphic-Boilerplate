@@ -84,6 +84,7 @@ class Header extends Component {
       }
 
   testAPI = (token) => {
+    const context = this;
     FB.api('/me', {
       access_token : token,
       fields: 'name,id,email,picture.width(640)'
@@ -97,7 +98,20 @@ class Header extends Component {
           if(localStorage.getItem('reloadFlag') === 'false') {
             localStorage.setItem('reloadFlag', true);
             browserHistory.push('/main');
-            location.reload();
+            axios.post('/getUser',{})
+              .then(function (response) {
+                context.setState({loading: false});
+                console.log(response.data)
+                  if (response.data.result !== -1) {
+                  //login時先把其他登入的裝置登出
+                  socket.emit('logout',context.state.account);
+                  //自己登入
+                  socket.emit('login',response.data);
+                  context.props.userInfoAction(response.data);
+                  browserHistory.push('/main');
+                }
+              })
+            //location.reload();
           }
         }
       })
@@ -214,5 +228,6 @@ function  mapStateToProp(state){
 }
 
 export default connect(mapStateToProp,{
-  logout:actions.logOut
+  logout:actions.logOut,
+  userInfoAction:actions.userInfo,
 })(Header)
