@@ -1,22 +1,11 @@
 import { Redisclient } from './redis';
 import crypto from 'crypto';
 
-const payload = [{a:12,b:13},{a:12,b:13},{a:12,b:13}];
-
-Redisclient.set("short", JSON.stringify(payload), () => {
-
-});
-Redisclient.get("short",function (err, reply) {
-    console.log(JSON.parse(reply)); // Will print `OK`
-});
-
-
-
 export const socketio = (io, axios, config1) => {
 
 //伺服器重啟時Redis初始化連線人數
 Redisclient.set("connectedUserNumber",0, () => {});
-Redisclient.set("chatRoomUsersList",JSON.stringify({'a':12}), () => {});
+Redisclient.set("chatRoomUsersList",JSON.stringify({}), () => {});
 
 io.on('connection', function(socket){
 
@@ -37,9 +26,9 @@ io.on('connection', function(socket){
       let payload = JSON.parse(reply);
       delete payload[dec];
       Redisclient.set("chatRoomUsersList",JSON.stringify(payload), (err, reply) => {
-        socket.emit('chatRoomUsers',{user: payload});
-        socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload});
-        console.log(payload)
+        socket.emit('chatRoomUsers',{user: payload, whichone: dec});
+        socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload, whichone: dec});
+        //console.log(payload)
       });
     })
 
@@ -49,7 +38,7 @@ io.on('connection', function(socket){
     Redisclient.get("connectedUserNumber",function (err, reply) {
       if (err) console.log(err);
       Redisclient.set("connectedUserNumber",parseInt(reply)-1, () => {
-        console.log('連線人數'+ (parseInt(reply)-1))
+        console.log('連線client數量為'+ (parseInt(reply)-1))
       });
     });
     //線上人數資料
@@ -65,7 +54,7 @@ io.on('connection', function(socket){
   Redisclient.get("connectedUserNumber",function (err, reply) {
     if (err) console.log(err);
     Redisclient.set("connectedUserNumber",parseInt(reply)+1, () => {
-      console.log('連線人數'+ (parseInt(reply)+1))
+      console.log('連線client數量為'+ (parseInt(reply)+1))
     });
   });
 
@@ -84,9 +73,9 @@ io.on('connection', function(socket){
         const name = res.account;
         delete payload[name];
         Redisclient.set("chatRoomUsersList",JSON.stringify(payload), (err, reply) => {
-          socket.emit('chatRoomUsers',{user: payload});
-          socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload});
-          console.log(payload)
+          socket.emit('chatRoomUsers',{user: payload, whichone: name});
+          socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload, whichone: name});
+          //console.log(payload)
         });
 			})
 		});
@@ -103,9 +92,10 @@ io.on('connection', function(socket){
         const name = res.account;
         const new1 = Object.assign(payload, {[name]: {avatar: res.avatar, name: res.name }});
         Redisclient.set("chatRoomUsersList",JSON.stringify(new1), (err, reply) => {
-          socket.emit('chatRoomUsers',{user: new1});
-          socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: new1});
-          console.log(new1)
+          socket.broadcast.to('chatPage').emit('userEnter',{user: res.name});//顯示哪個使用者進入
+          socket.emit('chatRoomUsers',{user: new1, whichone: name});
+          socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: new1, whichone: name});//更新所有在聊天室的使用者列表
+          //console.log(new1)
         });
       });
 			socket.leave('mainPage', () => {
@@ -133,9 +123,10 @@ io.on('connection', function(socket){
       const name = res;
       delete payload[name];
       Redisclient.set("chatRoomUsersList",JSON.stringify(payload), (err, reply) => {
-        socket.emit('chatRoomUsers',{user: payload});
-        socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload});
-        console.log(payload)
+        socket.broadcast.to('chatPage').emit('userLeave',{user: payload.name});
+        socket.emit('chatRoomUsers',{user: payload, whichone: name});
+        socket.broadcast.to('chatPage').emit('chatRoomUsers',{user: payload, whichone: name});
+        //console.log(payload)
       });
     })
   });

@@ -33,6 +33,75 @@ class Header extends Component {
     socket.on('toMainPage', () => {
       browserHistory.push('/main')
     })
+
+
+
+
+    ///////////////////////////////
+
+
+
+    function checkLoginState() {
+      FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+      });
+    }
+
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '259990304339055',
+        cookie     : true,  // enable cookies to allow the server to access
+        xfbml      : true,  // parse social plugins on this page
+        version    : 'v2.8' // use graph api version 2.8
+      });
+    };
+
+
+    ///////////////////////////////
+  }
+
+  statusChangeCallback = (response) => {
+        console.log(response);
+        // The response object is returned with a status field that lets the
+        // app know the current login status of the person.
+        // Full docs on the response object can be found in the documentation
+        // for FB.getLoginStatus().
+        if (response.status === 'connected') {
+          // Logged into your app and Facebook.
+          this.testAPI(response.authResponse.accessToken);
+        } else if (response.status === 'not_authorized') {
+          console.log('not_authorized')
+          // The person is logged into Facebook, but not your app.
+          // document.getElementById('status').innerHTML = 'Please log ' +
+          //   'into this app.';
+        } else {
+          // The person is not logged into Facebook, so we're not sure if
+          // they are logged into this app or not.
+          // document.getElementById('status').innerHTML = 'Please log ' +
+          //   'into Facebook.';
+          console.log('not login')
+        }
+      }
+
+  testAPI = (token) => {
+    FB.api('/me', {
+      access_token : token,
+      fields: 'name,id,email,picture.width(640)'
+    },(res) => {
+      // 把資料先傳給後端，看使用者是否註冊過，如第一次則註冊使用者並登入，之後則直接登入
+      console.log(res)
+      axios.post('/FBlogin' ,res)
+      .then(response => {
+        console.log(response.data)
+        if (response.data.result === 'ok') {
+          if(localStorage.getItem('reloadFlag') === 'false') {
+            localStorage.setItem('reloadFlag', true);
+            browserHistory.push('/main');
+            location.reload();
+          }
+        }
+      })
+    });
   }
   login = () => {
     browserHistory.push('/login')
@@ -43,6 +112,7 @@ class Header extends Component {
   logout = () => {
     const context = this;
     this.setState({ loading: true });
+    localStorage.setItem('reloadFlag', false);
 
     //登出時讓所有裝置登出
     socket.emit('logout',this.props.userInfo.account);
@@ -57,6 +127,14 @@ class Header extends Component {
       console.log(error);
     }) 
   }
+  FBlogin() {
+    const context = this;
+    this.setState({ loading: true });
+      FB.getLoginStatus(function(response) {
+        context.statusChangeCallback(response);
+      });
+  }
+
   render() {
     return (
       <div style={style.container}>
@@ -64,27 +142,36 @@ class Header extends Component {
         {
         getCookie('ifUser') === 'true'
         ?
-        <div style={style.menu}>
+          <div style={style.menu}>
+            {
+              this.state.loading
+              ?
+                <Loading style={{ marginTop: '0px' }} />
+              :
+                <Menu logout={() => this.logout()} title={ this.props.userInfo.name || '' } />
+            }
+          </div>
+        :
+          <div>
           {
             this.state.loading
             ?
-            <Loading style={{ marginTop: '0px' }} />
+              <Loading style={{ position: 'absolute',right: '-50px', top: '-100px' }} />
             :
-            <Menu logout={() => this.logout()} title={ this.props.userInfo.name || '' } />
+              <div>
+                <RaisedButton onClick={() => this.login()} label="登入"  style={style.login} />
+                <RaisedButton onClick={() => this.register()} label="註冊"  style={style.register} />
+                <RaisedButton onClick={() => this.FBlogin()} labelColor="white" label="臉書登入" style={style.FBbutton} backgroundColor="#31589c" />
+              </div>
           }
-        </div>
-        :
-        <div>
-          <RaisedButton onClick={() => this.login()} label="登入"  style={style.login} />
-          <RaisedButton onClick={() => this.register()} label="註冊"  style={style.register} />
-        </div>
+          </div>
         }
       </div>
     )
   }
 }
 
-const style= {
+const style = {
   container: {
     width: '100%',
     height: '48px',
@@ -107,6 +194,16 @@ const style= {
   menu: {
     marginTop: '-50px',
     float: 'right',
+  },
+  FBbutton: {
+    float: 'right',
+    marginRight: '2%',
+    marginTop: '5px',
+    width: '100px',
+    height: '30px',
+    color: 'white',
+    textAlign: 'center',
+    lineHeight: '30px'
   }
 }
 

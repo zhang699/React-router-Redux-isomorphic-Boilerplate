@@ -12,11 +12,25 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: '2343333'
+      user: '2343333',
+      account: ''
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    if(localStorage.getItem('reloadFlag')) {  
+      localStorage.setItem('reloadFlag', false);
+    }
+    //fb sdk import
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v2.8&appId=259990304339055";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+////////////////////////////////////
 
     const context = this;
     axios.post(config.origin + '/getUser',{})
@@ -24,6 +38,7 @@ class App extends Component {
         if(response.data.result === -1){
           return //未登入
         }
+        socket.emit('logout',context.state.account);
         socket.emit('login',response.data)
         context.props.userInfoAction(response.data);
       })

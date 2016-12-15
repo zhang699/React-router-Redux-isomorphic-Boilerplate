@@ -109,7 +109,7 @@ class PersonalInfo extends Component {
           <div style={style.left}>
             { this.props.userInfo.avatar
               ?
-            <img ref="avatar" height="200px" src={this.props.userInfo.avatar + `?s=120&d=identicon`} />
+            <img ref="avatar" height="200px" src={this.props.userInfo.avatar} />
               :
             ''
             }

@@ -119,11 +119,18 @@ const renderFullPage = (html, preloadedState) => (`
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
+  <script></script>
 	<script>
 	  var socket = io();
+
+
+
+
 	</script>
 </head>
 <body>
+<div id="fb-root"></div>
+
   <div id="app">${html}</div>
   <script>
   window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\x3c')}

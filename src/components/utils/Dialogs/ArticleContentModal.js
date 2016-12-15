@@ -7,6 +7,7 @@ import { findDOMNode } from 'react-dom';
 import ListMsg from '../../List.js';
 import LeaveMsgModal from './LeaveMsgModal.js';
 import SimpleDialog from '../../utils/Dialogs/SimpleDialog.js'
+import Loading from '../Loading/'
 /**
  * A modal dialog can only be closed by selecting one of the actions.
  *
@@ -34,7 +35,9 @@ const style = {
     fontSize: '20px',
     outline: 'none',
     overflowY: 'scroll',
-    borderTop: '1px solid gray'
+    borderTop: '1px solid gray',
+    color: 'black',
+    paddingTop: '10px'
   },
   title: {
     height: '20px',
@@ -62,13 +65,17 @@ export default class ArticleContentModal extends React.Component {
       title: '',
       content: '',
       leaveMsgModal: false,
-      comments: []
+      comments: [],
+      loading: true
     }
   }
   componentWillMount() {
     axios.get('articles/' + this.props.activeArticle._id)
     .then((response) => {
-      this.setState({ comments: response.data.comments });
+      console.log(response.data)
+      this.setState({ comments: response.data.comments }, () => {
+        this.setState({ loading: false });
+      });
     })
   }
   handleClose = () => {
@@ -135,6 +142,7 @@ export default class ArticleContentModal extends React.Component {
         </div>
         <div style={style.levmsgLine}></div>
         <div style={style.levmsgTitle}>留言內容</div>
+        {this.state.loading ? <Loading /> : ''}
         <ListMsg comments={this.state.comments} />
         { this.state.leaveMsgModal ? <LeaveMsgModal context={this} /> : '' }
         { this.state.dialog ? <SimpleDialog context={this} />  : ''} {/* 未登入*/}

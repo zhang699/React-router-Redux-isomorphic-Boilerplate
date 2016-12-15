@@ -34,7 +34,7 @@ const ChatList = (props) => (
       <ListItem
         leftAvatar = {
           <div >
-            <Avatar src={i.avatar + `?d=identicon`} />
+            <Avatar src={i.avatar} />
             <div style={style.author}>{i.name}</div>
           </div>
         }>

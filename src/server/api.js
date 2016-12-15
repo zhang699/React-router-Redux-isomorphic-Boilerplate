@@ -63,7 +63,7 @@ app.get('/userArticles/:user',authToken,(req,res) => {
 })
 
 //以文章id查詢文章內容
-app.get('/articles/:id',authToken,(req,res) => {
+app.get('/articles/:id', (req,res) => {
 	Post.findOne({_id: req.params.id})
 	.then(data => {
   	 res.end(JSON.stringify(data))
@@ -109,6 +109,77 @@ app.post('/login',function(req,res){
 		})
 })
 
+app.post('/FBlogin', (req, res) => {
+	User.find({account: req.body.id})
+		.then(data => {
+			if(data[0] === undefined) {
+				//第一次使用oauth 幫使用者註冊
+				let user = new User({
+					account: req.body.id,
+					//password: req.body.password,
+					email: req.body.email,
+					name: req.body.name,
+					avatar: req.body.picture.data.url,
+					RegistedDate: new Date(),
+					mobile: '',
+					address: '',
+					hobby: '',
+					birthday: ''
+				});
+				user.save()
+				.catch(err => console.log(err));
+				sendMail({ email: req.body.email })
+
+				res.cookie('ifUser',true, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
+				res.cookie('a1',req.body.id, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
+
+				//將會在cookie中存入token之後token回到server取值
+				req.session.user = req.body.id;
+				//jwt token
+				let jwtpayload = data[0];
+				jwtpayload.password = null;//移除密碼欄位，之後重要資訊時要求輸入密碼
+				let token = jwt.sign({
+					exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
+					data: {
+					user: jwtpayload
+					}
+				}, jwtSecret);
+				res.cookie('t', token, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: true });
+				res.end('成功註冊');
+				 
+			} else {
+
+				User.find({account:req.body.id})
+					.then(data => {
+
+						res.cookie('ifUser',true, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
+						res.cookie('a1',req.body.id, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: false });
+						//將會在cookie中存入token之後token回到server取值
+						req.session.user = req.body.id;
+						//jwt token
+						let jwtpayload = data[0];
+						jwtpayload.password = null;//移除密碼欄位，之後重要資訊時要求輸入密碼
+						let token = jwt.sign({
+							exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
+							data: {
+							user: jwtpayload
+							}
+						}, jwtSecret);
+						res.cookie('t', token, { maxAge: 1000 * 60 * 60 * 24 * 1, httpOnly: true });
+
+						res.json({
+							result: 'ok',
+							data
+						})
+				  })		
+			}
+		})
+		.catch(err => {
+			console.log(err);
+		})	
+
+}) 
+
 app.post('/logout',function(req,res){
 	res.cookie('ifUser',true, { expires: new Date() });
 	res.cookie('t',true, { expires: new Date() });
@@ -141,7 +212,7 @@ app.post('/signup',function(req,res){
 					password: req.body.password,
 					email: req.body.email,
 					name: req.body.nickName,
-					avatar: `http://www.gravatar.com/avatar/${md5.update(req.body.email).digest('hex')}`,
+					avatar: `http://www.gravatar.com/avatar/${md5.update(req.body.email).digest('hex')}?s=120&d=identicon`,
 					RegistedDate: new Date(),
 					mobile: '',
 					address: '',
