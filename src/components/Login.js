@@ -55,7 +55,6 @@ class Login extends Component {
         .then(function (response) {
           context.setState({ loading: false })
           if (response.data.result !== -1) {
-            console.log(111)
             //login時先把其他登入的裝置登出
             socket.emit('logout',context.state.account);
 
