@@ -1,8 +1,8 @@
-const config = {
-  email: 'jason71248@gmail.com',
+const config = {// fill in yourself info below
+  email: '',
   pass: '',
-  dbURL: 'mongodb://forclass1:test123@ds013898.mlab.com:13898/forclass',
-  jwtSecret: 'yicheng',
+  dbURL: '',
+  jwtSecret: '',
   origin: 'http://localhost:3001'
 }
 
