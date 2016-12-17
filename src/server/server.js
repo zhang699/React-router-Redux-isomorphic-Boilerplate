@@ -73,8 +73,8 @@ app.get('*',(req, res) => {
 			},
 			article: []
 	}
-
-	axios.get(`${config1.origin}/getArticle`)//axios在iso server須加上域名
+	
+	axios.get(`http://localhost:3001/getArticle`)//axios在iso server須加上域名
 		.then(response => {
 			initialState.article = response.data;//axios預設json parse
 			const store = configureStore(initialState);

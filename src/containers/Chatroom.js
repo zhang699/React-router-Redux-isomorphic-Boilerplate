@@ -70,14 +70,17 @@ class Chatroom extends Component {
     }
   }
   componentWillMount() {
-    if(typeof window !== 'undefined') {
+
+  }  
+  componentDidMount () {
+     if(typeof window !== 'undefined') {
       window.onbeforeunload = myUnloadEvent;
         function myUnloadEvent() {
           socket.emit('close',document.cookie.replace(/(?:(?:^|.*;\s*)a1\s*\=\s*([^;]*).*$)|^.*$/, "$1"))
       }
     }
     const context = this;
-    axios.post(config.origin + '/getUser',{})
+    axios.post('/getUser',{})
       .then(function (response) {
         if (response.data.result === -1) {
           if (browserHistory) { //for server side error
@@ -95,10 +98,9 @@ class Chatroom extends Component {
       .catch(function (error) {
         console.log(error);
       });
-  }  
-  componentDidMount () {
+
+
     const divRef = findDOMNode(this.refs.contentDiv);
-    const context = this ;
 
     socket.on('chat',(res) => { //使用者發表訊息
       let newList = this.state.msg;

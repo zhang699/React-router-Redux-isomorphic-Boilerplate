@@ -49,7 +49,7 @@ class Header extends Component {
 
     window.fbAsyncInit = function() {
       FB.init({
-        appId      : '259990304339055',
+        appId      : '350004755369462',
         cookie     : true,  // enable cookies to allow the server to access
         xfbml      : true,  // parse social plugins on this page
         version    : 'v2.8' // use graph api version 2.8
@@ -68,13 +68,20 @@ class Header extends Component {
         // for FB.getLoginStatus().
         if (response.status === 'connected') {
           // Logged into your app and Facebook.
+          console.log('connett FB')
           this.testAPI(response.authResponse.accessToken);
         } else if (response.status === 'not_authorized') {
           console.log('not_authorized')
+          FB.login((response) => {
+            this.testAPI(response.authResponse.accessToken);
+          });
           // The person is logged into Facebook, but not your app.
           // document.getElementById('status').innerHTML = 'Please log ' +
           //   'into this app.';
         } else {
+          FB.login((response) => {
+            this.testAPI(response.authResponse.accessToken);
+          })
           // The person is not logged into Facebook, so we're not sure if
           // they are logged into this app or not.
           // document.getElementById('status').innerHTML = 'Please log ' +

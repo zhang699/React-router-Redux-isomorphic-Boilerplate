@@ -34,7 +34,8 @@ class Main extends Component {
   }
   componentDidMount() {
     const context = this;
-      axios.post(config.origin + '/getUser',{})
+
+      axios.post('/getUser',{})
       .then(function (response) {
         socket.emit('mainPage',{ //使用者進入主頁
           name: response.data.name,

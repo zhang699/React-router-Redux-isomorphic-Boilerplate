@@ -33,7 +33,7 @@ class App extends Component {
 ////////////////////////////////////
 
     const context = this;
-    axios.post(config.origin + '/getUser',{})
+    axios.post('/getUser',{})
       .then(function (response) {
         if(response.data.result === -1){
           return //未登入
